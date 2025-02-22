@@ -11,7 +11,7 @@ class GameServiceStartNewGameTest {
     fun testStartNewGame() {
         val rootService = RootService()
         rootService.gameService.startNewGame("Kassel", "Duisburg")
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         // ueberpruefe ob das Spiel richtig initialisiert wurde
         checkNotNull(game)
 

@@ -5,8 +5,6 @@ import java.util.*
 fun main() {
     //SopraApplication().show()
 
-    val scanner: Scanner = Scanner(System.`in`)
-
     val rootService = RootService()
     //val gameService = GameService(rootService)
     //val playActionService = PlayActionService(rootService)
