@@ -5,7 +5,7 @@ package entity
  * @param hand Die HandKarten der Spieler
  * @param drawDeck Der Nachziehstapel der Spieler
  */
-class Player(
+data class Player(
     val name: String,
     val hand: MutableList<Card>,
     val drawDeck: MutableList<Card> ) {
