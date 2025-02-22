@@ -3,6 +3,9 @@ package service
 import entity.*
 import kotlin.test.*
 
+/**
+ * Testmethoden fuer die Methode CanPass() in [PlayActionService]
+ */
 class PlayActionServiceCanPassTest {
     private val rootService = RootService()
 
@@ -11,6 +14,11 @@ class PlayActionServiceCanPassTest {
         val game = rootService.currentGame
         checkNotNull(game)
 
+        /**
+         * der Spieler hat 8 Handkarten und eine Karte im Nachziehstapel
+         * die linke gespielte Karte ist clubs jack
+         * die rechte gespielte Karte ist club queen
+         */
         game.player1.hand.removeAll(game.player1.hand)
         game.player1.drawDeck.removeAll(game.player1.drawDeck)
         game.centerDeck1.removeLast()

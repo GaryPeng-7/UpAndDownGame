@@ -3,6 +3,9 @@ package service
 import entity.*
 import kotlin.test.*
 
+/**
+ * Testmethoden fuer die Methode drawCard() in [PlayActionService]
+ */
 class PlayActionServiceDrawCardTest {
     private val rootService = RootService()
 
@@ -11,6 +14,9 @@ class PlayActionServiceDrawCardTest {
         val game = rootService.currentGame
         checkNotNull(game)
 
+        /**
+         * Der Spieler hat 9 Handkarten und eine Karte im Nachziehstapel
+         */
         game.player1.hand.removeAll(game.player1.hand)
         game.player1.drawDeck.removeAll(game.player1.drawDeck)
 
@@ -60,10 +66,10 @@ class PlayActionServiceDrawCardTest {
         assertNotNull(game)
 
 
-        val centerCard = game.player1.drawDeck.last()
+        val drewCard = game.player1.drawDeck.last()
         rootService.playActionService.drawCard()
 
-        assertEquals(game.player1.hand.last(), centerCard)
+        assertEquals(game.player1.hand.last(), drewCard)
         assertTrue(game.player1.drawDeck.isEmpty())
         assertFalse(game.lastPass)
         assertEquals(game.currentPlayer, 1)

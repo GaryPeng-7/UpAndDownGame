@@ -1,11 +1,12 @@
 package service
 
-import org.junit.jupiter.api.Assertions.assertNotNull
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Testmethoden fuer die Methode startNewGame() in [GameService]
+ */
 class GameServiceStartNewGameTest {
-
 
     @Test
     fun testStartNewGame() {
@@ -30,6 +31,7 @@ class GameServiceStartNewGameTest {
             }
         }
 
+        // wenn counter kein 0 ist, heisst es, dass es wiederholte Karte im Stapel
         assertEquals(counter, 0)
 
     }

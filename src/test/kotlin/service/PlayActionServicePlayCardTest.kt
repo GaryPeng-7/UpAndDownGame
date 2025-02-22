@@ -3,6 +3,9 @@ package service
 import entity.*
 import kotlin.test.*
 
+/**
+ * Testmethoden fuer die Methode playCard() in [PlayActionService]
+ */
 class PlayActionServicePlayCardTest {
     private val rootService = RootService()
 
@@ -11,6 +14,10 @@ class PlayActionServicePlayCardTest {
         val game = rootService.currentGame
         checkNotNull(game)
 
+        /**
+         * der Spieler hat nur eine Karte: herat seven und
+         * auf der linken Spielstapel steht club ace
+         */
         game.player1.hand.removeAll(game.player1.hand)
         game.centerDeck1.removeAll(game.centerDeck1)
 
@@ -156,7 +163,7 @@ class PlayActionServicePlayCardTest {
     }
 
     @Test
-    fun testHandAfterAction() {
+    fun testSuccess() {
         val rootService = setUp()
 
         var game = rootService.currentGame
@@ -164,26 +171,13 @@ class PlayActionServicePlayCardTest {
 
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.QUEEN))
 
-        // expected to fail
         rootService.playActionService.playCard(game.player1.hand.last(), 0)
+
         assertEquals(game.player1.hand.size, 1)
-        assertFalse(game.player1.hand.contains(Card(CardSuit.CLUBS, CardValue.QUEEN)))
-    }
-
-    @Test
-    fun testCenterDeckAfterAction() {
-        val rootService = setUp()
-
-        var game = rootService.currentGame
-        assertNotNull(game)
-
-        game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.QUEEN))
-
-        // expected to fail
-        rootService.playActionService.playCard(game.player1.hand.last(), 0)
         assertEquals(game.centerDeck1.size, 2)
         assertTrue(game.centerDeck1.contains(Card(CardSuit.CLUBS, CardValue.QUEEN)))
         assertFalse(game.lastPass)
         assertEquals(game.currentPlayer, 1)
     }
+
 }

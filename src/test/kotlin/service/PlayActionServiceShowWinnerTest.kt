@@ -3,6 +3,9 @@ package service
 import entity.*
 import kotlin.test.*
 
+/**
+ * Testmethoden fuer die Hilfsmethode showWinner() in [PlayActionService]
+ */
 class PlayActionServiceShowWinnerTest {
     private val rootService = RootService()
 
@@ -11,6 +14,9 @@ class PlayActionServiceShowWinnerTest {
         val game = rootService.currentGame
         checkNotNull(game)
 
+        /**
+         * alle stapel ausser den Spielstapeln sind leer
+         */
         game.player1.hand.removeAll(game.player1.hand)
         game.player1.drawDeck.removeAll(game.player1.drawDeck)
         game.player2.hand.removeAll(game.player2.hand)

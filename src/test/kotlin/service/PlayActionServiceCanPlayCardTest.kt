@@ -3,7 +3,9 @@ package service
 import entity.*
 import kotlin.test.*
 
-
+/**
+ * Testmethoden fuer die Methode canPlayCard() in [PlayActionService]
+ */
 class PlayActionServiceCanPlayCardTest {
     private val rootService = RootService()
 
@@ -12,6 +14,9 @@ class PlayActionServiceCanPlayCardTest {
         val game = rootService.currentGame
         checkNotNull(game)
 
+        /**
+         * der Spieler hat 4 Karten, mit denen man nicht ablegen darf
+         */
         game.player1.hand.removeAll(game.player1.hand)
         game.centerDeck1.add(Card(CardSuit.CLUBS, CardValue.ACE))
         game.centerDeck2.add(Card(CardSuit.SPADES, CardValue.ACE))

@@ -3,6 +3,9 @@ package service
 import entity.*
 import kotlin.test.*
 
+/**
+ * Testmethoden fuer die Methode CanDrawCard() in [PlayActionService]
+ */
 class PlayActionServiceCanDrawCardTest {
     private val rootService = RootService()
 
@@ -11,6 +14,9 @@ class PlayActionServiceCanDrawCardTest {
         val game = rootService.currentGame
         checkNotNull(game)
 
+        /**
+         * Der Spieler hat 9 Handkarten und eine Karte im Nachziehstapel
+         */
         game.player1.hand.removeAll(game.player1.hand)
         game.player1.drawDeck.removeAll(game.player1.drawDeck)
 

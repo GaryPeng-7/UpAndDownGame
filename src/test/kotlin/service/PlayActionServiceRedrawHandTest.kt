@@ -3,6 +3,9 @@ package service
 import entity.*
 import kotlin.test.*
 
+/**
+ * Testmethoden fuer die Methode redrawHand() in [PlayActionService]
+ */
 class PlayActionServiceRedrawHandTest {
     private val rootService = RootService()
 
@@ -11,6 +14,9 @@ class PlayActionServiceRedrawHandTest {
         val game = rootService.currentGame
         checkNotNull(game)
 
+        /**
+         * Der Spieler hat 8 Handkarten und eine Karte im Nachziehstapel
+         */
         game.player1.hand.removeAll(game.player1.hand)
         game.player1.drawDeck.removeAll(game.player1.drawDeck)
 
