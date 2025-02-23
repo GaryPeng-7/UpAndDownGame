@@ -15,6 +15,11 @@ data class UpAndDownGame(var currentPlayer : Int, val player1 : Player, val play
     var lastPass : Boolean = false
     var winner : Int = -1
 
+    /**
+     * ein Getter fuer den jetzigen Spiler,
+     * 0 ist Player1
+     * 1 ist Player2
+     */
     fun currentPlayer() : Player{
         if (currentPlayer == 0) {
             return player1
@@ -22,6 +27,11 @@ data class UpAndDownGame(var currentPlayer : Int, val player1 : Player, val play
         return player2
     }
 
+    /**
+     * ein Getter fuer den Spielstapel,
+     * 0 ist der linke Spielstapel
+     * 1 ist der rechte Spielstapel
+     */
     fun getCenterDeck(index : Int) : MutableList<Card> {
         if (index == 0) {
             return centerDeck1

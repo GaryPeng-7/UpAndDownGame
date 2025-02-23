@@ -22,5 +22,4 @@ enum class CardSuit {
         DIAMONDS -> "♦"
     }
 
-
 }
