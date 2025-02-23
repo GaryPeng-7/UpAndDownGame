@@ -4,21 +4,28 @@ import entity.*
 import kotlin.test.*
 
 /**
- * Testmethoden fuer die Methode CanDrawCard() in [PlayActionService]
+ * Testmethoden fuer die Methode pass() in [PlayerActionService]
  */
-class PlayActionServiceCanDrawCardTest {
+class PlayerActionServicePassTest {
     private val rootService = RootService()
 
+    /**
+     * die Initialisierungsfunktion fuer das Spiel
+     */
     fun setUp() : RootService {
         rootService.gameService.startNewGame("Kassel", "Duisburg")
         val game = rootService.currentGame
         checkNotNull(game)
 
         /**
-         * Der Spieler hat 9 Handkarten und eine Karte im Nachziehstapel
+         * der Spieler hat 8 Handkarten und eine Karte im Nachziehstapel
+         * die linke gespielte Karte ist clubs jack
+         * die rechte gespielte Karte ist club queen
          */
         game.player1.hand.removeAll(game.player1.hand)
         game.player1.drawDeck.removeAll(game.player1.drawDeck)
+        game.centerDeck1.removeLast()
+        game.centerDeck2.removeLast()
 
         game.player1.drawDeck.add(Card(CardSuit.SPADES, CardValue.FIVE))
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.ACE))
@@ -29,42 +36,47 @@ class PlayActionServiceCanDrawCardTest {
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.SIX))
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.SEVEN))
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.EIGHT))
-        game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.NINE))
+        game.centerDeck1.add(Card(CardSuit.CLUBS, CardValue.JACK))
+        game.centerDeck2.add(Card(CardSuit.CLUBS, CardValue.QUEEN))
 
         game.currentPlayer = 0
 
         return rootService
     }
 
+    /**
+     * Testfall:
+     * man darf nicht passen
+     */
     @Test
-    fun testDeckIsEmpty() {
+    fun testCanNotPass() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
-        game.player1.drawDeck.removeLast()
-        assertFalse(rootService.playActionService.canDrawCard())
+        assertFails{rootService.playerActionService.pass()}
     }
 
-    @Test
-    fun testHandSizeTen() {
-        val rootService = setUp()
-
-        var game = rootService.currentGame
-        assertNotNull(game)
-
-        game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.TEN))
-        assertFalse(rootService.playActionService.canDrawCard())
-    }
-
+    /**
+     * Testfall:
+     * die Nachbedingung nach der erfolgreichen Aktion
+     */
     @Test
     fun testSuccess() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
-        assertTrue(rootService.playActionService.canDrawCard())
+        game.player1.drawDeck.removeLast()
+
+        assertFails {
+            assertFails {
+                rootService.playerActionService.pass()
+            }
+        }
+        assertTrue(game.lastPass)
+        assertEquals(game.currentPlayer, 1)
     }
 }

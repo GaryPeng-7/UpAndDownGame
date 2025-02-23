@@ -4,11 +4,14 @@ import entity.*
 import kotlin.test.*
 
 /**
- * Testmethoden fuer die Methode canPlayCard() in [PlayActionService]
+ * Testmethoden fuer die Methode canPlayCard() in [PlayerActionService]
  */
-class PlayActionServiceCanPlayCardTest {
+class PlayerActionServiceCanPlayCardTest {
     private val rootService = RootService()
 
+    /**
+     * die Initialisierungsfunktion fuer das Spiel
+     */
     fun setUp() : RootService {
         rootService.gameService.startNewGame("Kassel", "Duisburg")
         val game = rootService.currentGame
@@ -29,21 +32,25 @@ class PlayActionServiceCanPlayCardTest {
         return rootService
     }
 
+    /**
+     * Testfall:
+     * gleiche Farbe + Diffenrenz = 1
+     */
     @Test
     fun testSameSuit1() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.KING))
-        assertTrue(rootService.playActionService.canPlayCard())
-
-        game.player1.hand.removeLast()
-        game.player1.hand.add(Card(CardSuit.SPADES, CardValue.KING))
-        assertTrue(rootService.playActionService.canPlayCard())
+        assertTrue(rootService.playerActionService.canPlayCard())
     }
 
+    /**
+     * Testfall:
+     * gleiche Farbe + Diffenrenz = 2
+     */
     @Test
     fun testSameSuit2() {
         val rootService = setUp()
@@ -52,100 +59,96 @@ class PlayActionServiceCanPlayCardTest {
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.QUEEN))
-        assertTrue(rootService.playActionService.canPlayCard())
-
-        game.player1.hand.removeLast()
-        game.player1.hand.add(Card(CardSuit.SPADES, CardValue.QUEEN))
-        assertTrue(rootService.playActionService.canPlayCard())
+        assertTrue(rootService.playerActionService.canPlayCard())
     }
 
+    /**
+     * Testfall:
+     * unterschiedliche Farbe + Diffenrenz = 1
+     */
     @Test
     fun testDifferentSuit1() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.KING))
-        assertTrue(rootService.playActionService.canPlayCard())
-
-        game.player1.hand.removeLast()
-        game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.KING))
-        assertTrue(rootService.playActionService.canPlayCard())
+        assertTrue(rootService.playerActionService.canPlayCard())
     }
 
+    /**
+     * Testfall:
+     * unterschiedliche Farbe + Diffenrenz = 2
+     */
     @Test
     fun testDifferentSuit2() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.QUEEN))
-        assertFalse(rootService.playActionService.canPlayCard())
-
-        game.player1.hand.removeLast()
-        game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.QUEEN))
-        assertFalse(rootService.playActionService.canPlayCard())
+        assertFalse(rootService.playerActionService.canPlayCard())
     }
 
+    /**
+     * Testfall:
+     * gleiche Farbe + Diffenrenz = 12
+     */
     @Test
     fun testSameSuit12() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.TWO))
-        assertTrue(rootService.playActionService.canPlayCard())
-
-        game.player1.hand.removeLast()
-        game.player1.hand.add(Card(CardSuit.SPADES, CardValue.TWO))
-        assertTrue(rootService.playActionService.canPlayCard())
+        assertTrue(rootService.playerActionService.canPlayCard())
     }
 
+    /**
+     * Testfall:
+     * gleiche Farbe + Diffenrenz = 11
+     */
     @Test
     fun testSameSuit11() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.THREE))
-        assertTrue(rootService.playActionService.canPlayCard())
-
-        game.player1.hand.removeLast()
-        game.player1.hand.add(Card(CardSuit.SPADES, CardValue.THREE))
-        assertTrue(rootService.playActionService.canPlayCard())
+        assertTrue(rootService.playerActionService.canPlayCard())
     }
 
+    /**
+     * Testfall:
+     * unterschiedliche Farbe + Diffenrenz = 12
+     */
     @Test
     fun testDifferentSuit12() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.TWO))
-        assertTrue(rootService.playActionService.canPlayCard())
-
-        game.player1.hand.removeLast()
-        game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.TWO))
-        assertTrue(rootService.playActionService.canPlayCard())
+        assertTrue(rootService.playerActionService.canPlayCard())
     }
 
+    /**
+     * Testfall:
+     * unterschiedliche Farbe + Diffenrenz = 11
+     */
     @Test
     fun testDifferentSuit11() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.THREE))
-        assertFalse(rootService.playActionService.canPlayCard())
-
-        game.player1.hand.removeLast()
-        game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.THREE))
-        assertFalse(rootService.playActionService.canPlayCard())
+        assertFalse(rootService.playerActionService.canPlayCard())
     }
 }

@@ -8,6 +8,9 @@ import kotlin.test.assertEquals
  */
 class GameServiceStartNewGameTest {
 
+    /**
+     * Testfall der Ueberpruefung, ob alle Handkarten unterscedlich sind
+     */
     @Test
     fun testStartNewGame() {
         val rootService = RootService()

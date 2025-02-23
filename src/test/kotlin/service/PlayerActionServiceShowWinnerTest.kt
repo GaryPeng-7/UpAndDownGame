@@ -4,12 +4,12 @@ import entity.*
 import kotlin.test.*
 
 /**
- * Testmethoden fuer die Hilfsmethode showWinner() in [PlayActionService]
+ * Testmethoden fuer die Hilfsmethode showWinner() in [PlayerActionService]
  */
-class PlayActionServiceShowWinnerTest {
+class PlayerActionServiceShowWinnerTest {
     private val rootService = RootService()
 
-    fun setUp() : RootService {
+    private fun setUp() : RootService {
         rootService.gameService.startNewGame("Kassel", "Duisburg")
         val game = rootService.currentGame
         checkNotNull(game)
@@ -31,22 +31,30 @@ class PlayActionServiceShowWinnerTest {
         return rootService
     }
 
+    /**
+     * Testfall:
+     * wenn Spieler 1 keine Karten hat
+     */
     @Test
     fun testPlayer1HandEmpty() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         val player1 = game.player1
         game.currentPlayer = 0
         player1.hand.add(Card(CardSuit.CLUBS, CardValue.TWO))
         game.player2.hand.add(Card(CardSuit.CLUBS, CardValue.TWO))
-        rootService.playActionService.playCard(player1.hand.last(), 0)
+        rootService.playerActionService.playCard(player1.hand.last(), 0)
 
         assertEquals(game.winner, 0)
     }
 
+    /**
+     * Testfall:
+     * wenn Spieler 2 keine Karten hat
+     */
     @Test
     fun testPlayer2HandEmpty() {
         val rootService = setUp()
@@ -58,17 +66,21 @@ class PlayActionServiceShowWinnerTest {
         game.currentPlayer = 1
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.THREE))
         player2.hand.add(Card(CardSuit.CLUBS, CardValue.TWO))
-        rootService.playActionService.playCard(player2.hand.last(), 0)
+        rootService.playerActionService.playCard(player2.hand.last(), 0)
 
         println(player2)
         assertEquals(game.winner, 1)
     }
 
+    /**
+     * Testfall:
+     * wenn Spieler 1 weniger insgesamt Karten hat
+     */
     @Test
     fun testPlayer1HandLess() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         val player1 = game.player1
@@ -77,17 +89,21 @@ class PlayActionServiceShowWinnerTest {
         player1.hand.add(Card(CardSuit.CLUBS, CardValue.FIVE))
         player2.hand.add(Card(CardSuit.CLUBS, CardValue.SIX))
         player2.hand.add(Card(CardSuit.CLUBS, CardValue.EIGHT))
-        rootService.playActionService.pass()
-        rootService.playActionService.pass()
+        rootService.playerActionService.pass()
+        rootService.playerActionService.pass()
 
         assertEquals(game.winner, 0)
     }
 
+    /**
+     * Testfall:
+     * wenn Spieler 2 weniger insgesamt Karten hat
+     */
     @Test
     fun testPlayer2HandLess() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         val player1 = game.player1
@@ -96,17 +112,21 @@ class PlayActionServiceShowWinnerTest {
         player2.hand.add(Card(CardSuit.CLUBS, CardValue.FIVE))
         player1.hand.add(Card(CardSuit.CLUBS, CardValue.SIX))
         player1.hand.add(Card(CardSuit.CLUBS, CardValue.EIGHT))
-        rootService.playActionService.pass()
-        rootService.playActionService.pass()
+        rootService.playerActionService.pass()
+        rootService.playerActionService.pass()
 
         assertEquals(game.winner, 1)
     }
 
+    /**
+     * Testfall:
+     * wenn Spieler 1 und 2 gleiche Menge Karten haben
+     */
     @Test
     fun testTie() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         val player1 = game.player1
@@ -116,8 +136,8 @@ class PlayActionServiceShowWinnerTest {
         player2.hand.add(Card(CardSuit.CLUBS, CardValue.SEVEN))
         player1.hand.add(Card(CardSuit.CLUBS, CardValue.SIX))
         player1.hand.add(Card(CardSuit.CLUBS, CardValue.EIGHT))
-        rootService.playActionService.pass()
-        rootService.playActionService.pass()
+        rootService.playerActionService.pass()
+        rootService.playerActionService.pass()
 
         assertEquals(game.winner, 2)
     }

@@ -4,11 +4,14 @@ import entity.*
 import kotlin.test.*
 
 /**
- * Testmethoden fuer die Methode drawCard() in [PlayActionService]
+ * Testmethoden fuer die Methode CanDrawCard() in [PlayerActionService]
  */
-class PlayActionServiceDrawCardTest {
+class PlayerActionServiceCanDrawCardTest {
     private val rootService = RootService()
 
+    /**
+     * die Initialisierungsfunktion fuer das Spiel
+     */
     fun setUp() : RootService {
         rootService.gameService.startNewGame("Kassel", "Duisburg")
         val game = rootService.currentGame
@@ -36,42 +39,47 @@ class PlayActionServiceDrawCardTest {
         return rootService
     }
 
+    /**
+     * Testfall:
+     * keine Karte im Nachziehstapel
+     */
     @Test
     fun testDeckIsEmpty() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.drawDeck.removeLast()
-        assertFails { rootService.playActionService.drawCard() }
+        assertFalse(rootService.playerActionService.canDrawCard())
     }
 
+    /**
+     * Testfall:
+     * 10 Karten in der Hand
+     */
     @Test
     fun testHandSizeTen() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.TEN))
-        assertFails { rootService.playActionService.drawCard() }
+        assertFalse(rootService.playerActionService.canDrawCard())
     }
 
+    /**
+     * Testfall:
+     * die Nachbedingung des erfolgreichen Falles
+     */
     @Test
     fun testSuccess() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
-
-        val drewCard = game.player1.drawDeck.last()
-        rootService.playActionService.drawCard()
-
-        assertEquals(game.player1.hand.last(), drewCard)
-        assertTrue(game.player1.drawDeck.isEmpty())
-        assertFalse(game.lastPass)
-        assertEquals(game.currentPlayer, 1)
+        assertTrue(rootService.playerActionService.canDrawCard())
     }
 }

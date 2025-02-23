@@ -4,11 +4,14 @@ import entity.*
 import kotlin.test.*
 
 /**
- * Testmethoden fuer die Methode canRedrawHand() in [PlayActionService]
+ * Testmethoden fuer die Methode redrawHand() in [PlayerActionService]
  */
-class PlayActionServiceCanRedrawHandTest {
+class PlayerActionServiceRedrawHandTest {
     private val rootService = RootService()
 
+    /**
+     * die Initialisierungsfunktion fuer das Spiel
+     */
     fun setUp() : RootService {
         rootService.gameService.startNewGame("Kassel", "Duisburg")
         val game = rootService.currentGame
@@ -35,35 +38,54 @@ class PlayActionServiceCanRedrawHandTest {
         return rootService
     }
 
+    /**
+     * Testfall:
+     * keine Karte im Nachziehstapel
+     */
     @Test
     fun testDeckIsEmpty() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.drawDeck.removeLast()
-        assertFalse(rootService.playActionService.canRedrawHand())
+        assertFails{rootService.playerActionService.redrawHand()}
     }
 
+    /**
+     * Testfall:
+     * 7 Karten in der Hand (weniger als 8)
+     */
     @Test
     fun testHandSizeSeven() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.removeLast()
-        assertFalse(rootService.playActionService.canRedrawHand())
+        assertFails{rootService.playerActionService.redrawHand()}
     }
 
+    /**
+     * Testfall:
+     * die Nachbedingung nach der erfolgreichen Aktion
+     */
     @Test
     fun testSuccess() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
-        assertTrue(rootService.playActionService.canDrawCard())
+
+        rootService.playerActionService.redrawHand()
+        val cardSum = game.player1.hand.size + game.player1.drawDeck.size
+
+        assertEquals(game.player1.hand.size, 5)
+        assertEquals(game.player1.drawDeck.size, cardSum - 5)
+        assertFalse(game.lastPass)
+        assertEquals(game.currentPlayer, 1)
     }
 }

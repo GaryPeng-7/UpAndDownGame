@@ -4,25 +4,24 @@ import entity.*
 import kotlin.test.*
 
 /**
- * Testmethoden fuer die Methode CanPass() in [PlayActionService]
+ * Testmethoden fuer die Methode canRedrawHand() in [PlayerActionService]
  */
-class PlayActionServiceCanPassTest {
+class PlayerActionServiceCanRedrawHandTest {
     private val rootService = RootService()
 
+    /**
+     * die Initialisierungsfunktion fuer das Spiel
+     */
     fun setUp() : RootService {
         rootService.gameService.startNewGame("Kassel", "Duisburg")
         val game = rootService.currentGame
         checkNotNull(game)
 
         /**
-         * der Spieler hat 8 Handkarten und eine Karte im Nachziehstapel
-         * die linke gespielte Karte ist clubs jack
-         * die rechte gespielte Karte ist club queen
+         * Der Spieler hat 8 Handkarten und eine Karte im Nachziehstapel
          */
         game.player1.hand.removeAll(game.player1.hand)
         game.player1.drawDeck.removeAll(game.player1.drawDeck)
-        game.centerDeck1.removeLast()
-        game.centerDeck2.removeLast()
 
         game.player1.drawDeck.add(Card(CardSuit.SPADES, CardValue.FIVE))
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.ACE))
@@ -33,57 +32,53 @@ class PlayActionServiceCanPassTest {
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.SIX))
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.SEVEN))
         game.player1.hand.add(Card(CardSuit.HEARTS, CardValue.EIGHT))
-        game.centerDeck1.add(Card(CardSuit.CLUBS, CardValue.JACK))
-        game.centerDeck2.add(Card(CardSuit.CLUBS, CardValue.QUEEN))
 
         game.currentPlayer = 0
 
         return rootService
     }
 
+    /**
+     * Testfall:
+     * keine Karte im Nachziehstapel
+     */
     @Test
-    fun testCanPlayCard() {
+    fun testDeckIsEmpty() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.drawDeck.removeLast()
-        game.centerDeck1.removeLast()
-        game.centerDeck1.add(Card(CardSuit.HEARTS, CardValue.NINE))
-        assertFalse(rootService.playActionService.canPass())
+        assertFalse(rootService.playerActionService.canRedrawHand())
     }
 
+    /**
+     * Testfall:
+     * 7 Karten in der Hand (weniger als 8)
+     */
     @Test
-    fun testCanDrawCard() {
+    fun testHandSizeSeven() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
-        assertFalse(rootService.playActionService.canPass())
+        game.player1.hand.removeLast()
+        assertFalse(rootService.playerActionService.canRedrawHand())
     }
 
-    @Test
-    fun testCanRedrawHand() {
-        val rootService = setUp()
-
-        var game = rootService.currentGame
-        assertNotNull(game)
-
-        game.player1.hand.add(Card(CardSuit.SPADES, CardValue.SIX))
-        game.player1.hand.add(Card(CardSuit.SPADES, CardValue.SEVEN))
-        assertFalse(rootService.playActionService.canPass())
-    }
-
+    /**
+     * Testfall:
+     * die Nachbedingung des erfolgreichen Falles
+     */
     @Test
     fun testSuccess() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
-        game.player1.drawDeck.removeLast()
-        assertTrue(rootService.playActionService.canPass())
+        assertTrue(rootService.playerActionService.canRedrawHand())
     }
 }
