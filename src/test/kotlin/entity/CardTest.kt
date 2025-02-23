@@ -1,8 +1,5 @@
-package service
+package entity
 
-import entity.Card
-import entity.CardSuit
-import entity.CardValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
