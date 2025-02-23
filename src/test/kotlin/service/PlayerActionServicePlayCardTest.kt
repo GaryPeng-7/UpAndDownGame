@@ -225,7 +225,7 @@ class PlayerActionServicePlayCardTest {
     fun testSuccess() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.QUEEN))

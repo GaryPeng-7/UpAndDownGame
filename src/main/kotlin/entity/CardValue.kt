@@ -1,7 +1,5 @@
 package entity
 
-import java.util.*
-
 /**
  * Enum to distinguish between the 13 possible values in a french-suited card game:
  * 2-10, Jack, Queen, King, and Ace.

@@ -59,7 +59,7 @@ class PlayerActionServiceShowWinnerTest {
     fun testPlayer2HandEmpty() {
         val rootService = setUp()
 
-        var game = rootService.currentGame
+        val game = rootService.currentGame
         assertNotNull(game)
 
         val player2 = game.player2
