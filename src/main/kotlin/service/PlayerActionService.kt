@@ -8,7 +8,7 @@ import entity.*
  * @param rootService
  */
 
-class PlayActionService(val rootService: RootService) {
+class PlayerActionService(val rootService: RootService) {
 
     /**
      * Die Methode playCard ermöglicht es einem Spieler, eine Karte von seiner Hand zu spielen.
@@ -20,7 +20,7 @@ class PlayActionService(val rootService: RootService) {
         val game = rootService.currentGame
         checkNotNull(game)
 
-        // ueberpruefe ob man die Karte auf den Stapel ablegen kann
+        // ueberpruefe, ob man die Karte auf den Stapel ablegen kann
         val centerCard = game.getCenterDeck(centerDeck).last()
         val difference = Math.abs(card.value.compareTo(centerCard.value))
         val canPlay : Boolean = when (difference) {
@@ -47,7 +47,6 @@ class PlayActionService(val rootService: RootService) {
             game.lastPass = false
             switchPlayerTurn()
         }
-
     }
 
     /**
@@ -66,7 +65,6 @@ class PlayActionService(val rootService: RootService) {
 
         game.lastPass = false
         switchPlayerTurn()
-
     }
 
     /**
@@ -88,7 +86,7 @@ class PlayActionService(val rootService: RootService) {
         currentPlayer.drawDeck.shuffle()
 
         // ziehe 5 Karten vom Nachziehstapel
-        for (i in 0 until 5) {
+        repeat(5) {
             currentPlayer.hand.add(currentPlayer.drawDeck.removeLast())
         }
 
@@ -214,7 +212,7 @@ class PlayActionService(val rootService: RootService) {
     /**
      * Hilfsmethode
      */
-    fun switchPlayerTurn() {
+    private fun switchPlayerTurn() {
         val game = rootService.currentGame
         checkNotNull(game)
 
@@ -227,7 +225,7 @@ class PlayActionService(val rootService: RootService) {
      * 1 = player 2 hat gewonnen
      * 2 = Unentschieden
      */
-    fun showWinner() {
+    private fun showWinner() {
         val game = rootService.currentGame
         checkNotNull(game)
 

@@ -6,13 +6,13 @@ import entity.UpAndDownGame
  * Diese Klasse dient als eine Bruecke zwischen den Serviceklassen und
  * dem Entity-Schicht
  * @property gameService
- * @property playActionService
+ * @property playerActionService
  * @property currentGame
  */
-class RootService() {
+class RootService {
 
     val gameService = GameService(this)
-    val playActionService = PlayActionService(this)
+    val playerActionService = PlayerActionService(this)
 
     var currentGame : UpAndDownGame? = null
 
