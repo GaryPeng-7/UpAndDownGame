@@ -1,6 +1,8 @@
 package gui
 
 import service.RootService
+import tools.aqua.bgw.animation.Animation
+import tools.aqua.bgw.animation.DelayAnimation
 import tools.aqua.bgw.core.BoardGameApplication
 
 class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable {
