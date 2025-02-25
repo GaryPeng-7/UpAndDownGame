@@ -1,6 +1,7 @@
 package service
 
 import entity.UpAndDownGame
+import gui.Refreshable
 
 /**
  * Diese Klasse dient als eine Bruecke zwischen den Serviceklassen und
@@ -16,4 +17,13 @@ class RootService {
 
     var currentGame : UpAndDownGame? = null
 
+
+    fun addRefreshable(newRefreshable: Refreshable) {
+        gameService.addRefreshable(newRefreshable)
+        playerActionService.addRefreshable(newRefreshable)
+    }
+
+    fun addRefreshables(vararg newRefreshables: Refreshable) {
+        newRefreshables.forEach { addRefreshable(it) }
+    }
 }

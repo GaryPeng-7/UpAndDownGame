@@ -8,7 +8,7 @@ import entity.*
  * @param rootService
  */
 
-class PlayerActionService(val rootService: RootService) {
+class PlayerActionService(private val rootService: RootService) : AbstractRefreshingService() {
 
     /**
      * Die Methode playCard ermöglicht es einem Spieler, eine Karte von seiner Hand zu spielen.
@@ -44,6 +44,8 @@ class PlayerActionService(val rootService: RootService) {
         if (currentPlayer.hand.isEmpty() && currentPlayer.drawDeck.isEmpty()) {
             showWinner()
         } else {
+
+            onAllRefreshables { refreshAfterPlayCard(centerDeck) }
             game.lastPass = false
             switchPlayerTurn()
         }
@@ -63,6 +65,8 @@ class PlayerActionService(val rootService: RootService) {
         val currentPlayer = game.currentPlayer()
         currentPlayer.hand.add(currentPlayer.drawDeck.removeLast())
 
+
+        onAllRefreshables { refreshAfterDrawCard() }
         game.lastPass = false
         switchPlayerTurn()
     }
@@ -90,6 +94,8 @@ class PlayerActionService(val rootService: RootService) {
             currentPlayer.hand.add(currentPlayer.drawDeck.removeLast())
         }
 
+
+        onAllRefreshables { refreshAfterRedrawHand() }
         game.lastPass = false
         switchPlayerTurn()
     }
@@ -109,6 +115,7 @@ class PlayerActionService(val rootService: RootService) {
         if (game.lastPass) {
             showWinner()
         } else {
+            onAllRefreshables { refreshAfterAfterPass() }
             game.lastPass = true
             switchPlayerTurn()
         }
@@ -217,6 +224,7 @@ class PlayerActionService(val rootService: RootService) {
         checkNotNull(game)
 
         game.currentPlayer = (game.currentPlayer + 1) % 2
+        onAllRefreshables { refreshAfterSwitchPlayerTurn() }
     }
 
     /**
@@ -225,7 +233,7 @@ class PlayerActionService(val rootService: RootService) {
      * 1 = player 2 hat gewonnen
      * 2 = Unentschieden
      */
-    private fun showWinner() {
+    fun showWinner() {
         val game = rootService.currentGame
         checkNotNull(game)
 

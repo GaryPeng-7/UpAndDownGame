@@ -8,7 +8,7 @@ import kotlin.random.Random
  * @param rootService
  */
 
-class GameService(val rootService: RootService) {
+class GameService(private val rootService: RootService) : AbstractRefreshingService() {
 
     /**
      * Die Methode startNewGame erlaubt das Starten des Spieles und das Setzen von Spielernamen.
@@ -53,5 +53,7 @@ class GameService(val rootService: RootService) {
 
         // weise das jetzige Spiel zu Rootservice zu
         rootService.currentGame = game
+
+        onAllRefreshables { refreshAfterGameStart() }
     }
 }
