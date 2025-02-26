@@ -35,7 +35,6 @@ class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable 
     }
 
     init {
-
         rootService.addRefreshables(
             this,
             gameScene,

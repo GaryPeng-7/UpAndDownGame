@@ -25,10 +25,13 @@ import tools.aqua.bgw.visual.ColorVisual
  */
 class GameScene(private val rootService: RootService) : BoardGameScene(1920, 1080), Refreshable {
 
+    // variable to translate card and cardview
     private val cardMap: BidirectionalMap<Card, CardView> = BidirectionalMap()
+    // variable to store the clicked card in the hand
     private var selectedCard : Card? = null
 
 
+    // decks and hands
     private val centerDeck1 = CardStack<CardView>(posX = 800, posY = 540).apply {
         onMouseClicked = {
             require(selectedCard!= null) {"please select the card in your hand first"}
@@ -59,8 +62,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         height = 200,
         spacing = -60
     )
-
-
     private val centerDeck2 = CardStack<CardView>(posX = 990, posY = 540).apply {
         onMouseClicked = {
             require(selectedCard != null) {"please select the card in your hand first"}
@@ -92,6 +93,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         spacing = -60
     )
 
+    // the labels
     private val currentSelectText = Label(
         width = 360, height = 100,
         posX = 770, posY = 400,
@@ -120,36 +122,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         text = "",
         font = Font(size = 28)
     )
-
-
-    private val redrawButton = Button(
-        width = 160, height = 75,
-        posX = 880, posY = 800,
-        text = "redraw",
-        font = Font(size = 20)
-    ).apply {
-        visual = ColorVisual(221, 136, 136)
-        onMouseClicked = {
-            rootService.currentGame?.let { _ ->
-                rootService.playerActionService.redrawHand()
-            }
-        }
-    }
-    private val passButton = Button(
-        width = 160, height = 75,
-        posX = 880, posY = 900,
-        text = "pass",
-        font = Font(size = 20)
-    ).apply {
-        visual = ColorVisual(221, 136, 136)
-        onMouseClicked = {
-            rootService.currentGame?.let { _ ->
-                rootService.playerActionService.pass()
-            }
-        }
-    }
-
-
     private val player1DeckSizeText = Label(
         width = 200, height = 60,
         posX = 340, posY = 480,
@@ -179,6 +151,33 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         font = Font(size = 20)
     )
 
+    // the buttons
+    private val redrawButton = Button(
+        width = 160, height = 75,
+        posX = 880, posY = 800,
+        text = "redraw",
+        font = Font(size = 20)
+    ).apply {
+        visual = ColorVisual(221, 136, 136)
+        onMouseClicked = {
+            rootService.currentGame?.let { _ ->
+                rootService.playerActionService.redrawHand()
+            }
+        }
+    }
+    private val passButton = Button(
+        width = 160, height = 75,
+        posX = 880, posY = 900,
+        text = "pass",
+        font = Font(size = 20)
+    ).apply {
+        visual = ColorVisual(221, 136, 136)
+        onMouseClicked = {
+            rootService.currentGame?.let { _ ->
+                rootService.playerActionService.pass()
+            }
+        }
+    }
 
     init {
         background = ColorVisual(108, 168, 59)
@@ -202,6 +201,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         val cardImageLoader = CardImageLoader()
         val currentPlayer = game.currentPlayer()
 
+        // to initialise all the cardviews
         initializeCardView(game.centerDeck1, centerDeck1, true, cardImageLoader)
         initializeCardView(game.player1.hand, player1Hand, cardImageLoader)
         initializeCardView(game.player1.drawDeck, player1DrawDeck, false, cardImageLoader)
@@ -239,13 +239,12 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             cardStack.add(cardView)
             cardMap.add(card to cardView)
         }
-
     }
 
     private fun initializeCardView(cards: MutableList<Card>, linearLayout: LinearLayout<CardView>,
-                                   cardImageLoader: CardImageLoader
-    ) {
+                                   cardImageLoader: CardImageLoader) {
         linearLayout.clear()
+
 
         cards.forEach { card ->
             val cardView = CardView(
@@ -343,9 +342,12 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             game.player1 -> player2DrawDeck.isDisabled
             game.player2 -> player1DeckSizeText.isDisabled
         }
+        selectedCard = null
+        currentSelectText.text = ""
         buttonEnabled()
     }
 
+    // private function to update the numbers
     private fun refreshNumber() {
         val game = rootService.currentGame
         checkNotNull(game)
@@ -355,6 +357,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         player2HandSizeText.text = game.player2.hand.size.toString() + "/ 10"
     }
 
+    // private function to flip the cards in the hand
     private fun flipHand() {
         val game = rootService.currentGame
         checkNotNull(game)
@@ -369,14 +372,19 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         }
     }
 
+    // help function to update the cardviews after the cards were being shuffled
     private fun shuffleView(hand : MutableList<Card>, drawDeck: MutableList<Card>,
                             handView : LinearLayout<CardView>, stackView : CardStack<CardView>) {
 
+        // the iterators for both of the container
         val stackIterator = stackView.iterator()
         val handIterator = handView.iterator()
+        // to merge the cards into a bigger list
         val allCards : List<Card> = drawDeck + hand
+        // the lists to save the original container contents
         val oriStackList = mutableListOf<CardView>()
         val oriHandList = mutableListOf<CardView>()
+        // the list to record the position where the cards really are
         val numList = mutableListOf<Int>()
 
         stackIterator.forEach { cardView ->
@@ -401,11 +409,15 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         stackView.clear()
         handView.clear()
 
+        // merge the lists and make a connection between the original cardviews
+        // and where they should actually go
         val allList = oriStackList + oriHandList
         val correspondMap : MutableMap<Int, CardView> = mutableMapOf()
         for ((counter, num) in numList.withIndex()) {
             correspondMap[num] = allList[counter]
         }
+        // sorted the map from 0 in order to loop through it with the right sequence
+        // and assign them back to the original container
         val sortedMap = correspondMap.toSortedMap()
         sortedMap.forEach { (num, cardView) ->
             if (num < drawDeck.size) {
@@ -418,6 +430,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         }
     }
 
+    // private function to help track the buttons
     private fun buttonEnabled() {
         if (rootService.playerActionService.canRedrawHand()) {
             redrawButton.visual = ColorVisual(221, 136, 136)
