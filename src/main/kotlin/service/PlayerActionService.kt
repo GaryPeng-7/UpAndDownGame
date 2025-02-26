@@ -244,24 +244,29 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         if (cardSum1 == 0) {
             println("player " + game.player1.name + " has won!")
             game.winner = 0
+            onAllRefreshables { refreshAfterEndGame() }
             return
         }
         if (cardSum2 == 0) {
             println("player " + game.player2.name + " has won!")
             game.winner = 1
+            onAllRefreshables { refreshAfterEndGame() }
             return
         }
         if ((cardSum1 < cardSum2)) {
             println("player " + game.player1.name + " has won!")
             game.winner = 0
+            onAllRefreshables { refreshAfterEndGame() }
             return
         }
         if ((cardSum1 > cardSum2)) {
             println("player " + game.player2.name + " has won!")
             game.winner = 1
+            onAllRefreshables { refreshAfterEndGame() }
             return
         }
         println("It's a tie!!")
         game.winner = 2
+        onAllRefreshables { refreshAfterEndGame() }
     }
 }

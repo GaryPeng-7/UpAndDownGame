@@ -19,8 +19,8 @@ class WaitingScene(private val rootService: RootService) : MenuScene(400, 1080),
     )
 
     val okButton = Button(
-        width = 140, height = 35,
-        posX = 50, posY = 240,
+        width = 250, height = 200,
+        posX = 60, posY = 200,
         text = "OK"
     ).apply {
         visual = ColorVisual(221, 136, 136)
