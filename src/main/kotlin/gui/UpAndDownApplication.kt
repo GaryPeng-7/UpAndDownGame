@@ -3,6 +3,9 @@ package gui
 import service.RootService
 import tools.aqua.bgw.core.BoardGameApplication
 
+/**
+ * Implementation of the BGW [BoardGameApplication] for the game application
+ */
 class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable {
 
     private val rootService = RootService()

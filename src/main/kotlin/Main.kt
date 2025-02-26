@@ -1,5 +1,8 @@
 import gui.UpAndDownApplication
 
+/**
+ * the main function for the UpAndDownGame
+ */
 fun main() {
     UpAndDownApplication().show()
 

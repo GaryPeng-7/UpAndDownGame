@@ -7,6 +7,12 @@ import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 
+/**
+ * this class is used for showing the end game menu scene after the game is ended.
+ * the winner will be shown on the menu
+ * [restartButton] can be pressed to restart the game
+ * [quitButton] can be pressed to quit the game
+ */
 class ResultScene(private val rootService: RootService) : MenuScene(400, 1080), Refreshable {
 
     private val headlineLabel = Label(

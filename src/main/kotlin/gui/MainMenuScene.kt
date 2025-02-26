@@ -8,6 +8,13 @@ import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 
+/**
+ * this class is used for showing the starting game menu scene
+ * after the game is initialized and after "restart" is clicked
+ * in [ResultScene].
+ * [startButton] can be pressed to start the game
+ * [quitButton] can be pressed to quit the game
+ */
 class MainMenuScene(private val rootService: RootService) : MenuScene(400, 1080), Refreshable {
 
     private val headlineLabel = Label(

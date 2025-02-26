@@ -13,6 +13,15 @@ import tools.aqua.bgw.util.BidirectionalMap
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 
+/**
+ * this is the main scene for the whole game, where it will be shown most of the time
+ * player 1 is on the left side and player 2 is on the right side
+ * each player has their own hand card area, drawpile area
+ * there are two additional played piles, which every player can use
+ * when the player click on their drawpile, they draw a card
+ * when the player click on a card in their hand and then click on one of the centerpile, they can play that card on it
+ * if the player is allowed to redraw or pass, then the buttons would be available for them to click on
+ */
 class GameScene(private val rootService: RootService) : BoardGameScene(1920, 1080), Refreshable {
 
     private val cardMap: BidirectionalMap<Card, CardView> = BidirectionalMap()
@@ -43,7 +52,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         }
     }
     private val player1Hand = LinearLayout<CardView>(
-        posX = 50,
+        posX = 0,
         posY = 880,
         width = 900,
         height = 200,
@@ -82,24 +91,30 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         spacing = -60
     )
 
-
-    private val currentPlayerText = Label(
-        width = 300, height = 80,
-        posX = 800, posY = 250,
+    private val currentSelectText = Label(
+        width = 360, height = 100,
+        posX = 770, posY = 400,
         alignment = Alignment.CENTER,
         text = "",
-        font = Font(size = 28)
+        font = Font(size = 40)
+    )
+    private val currentPlayerText = Label(
+        width = 360, height = 100,
+        posX = 770, posY = 150,
+        alignment = Alignment.CENTER,
+        text = "",
+        font = Font(size = 32)
     )
     private val player1Text = Label(
         width = 300, height = 80,
-        posX = 300, posY = 250,
+        posX = 300, posY = 300,
         alignment = Alignment.CENTER,
         text = "",
         font = Font(size = 28)
     )
     private val player2Text = Label(
         width = 300, height = 80,
-        posX = 1300, posY = 250,
+        posX = 1300, posY = 300,
         alignment = Alignment.CENTER,
         text = "",
         font = Font(size = 28)
@@ -107,9 +122,10 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
 
     private val redrawButton = Button(
-        width = 140, height = 35,
-        posX = 900, posY = 880,
+        width = 160, height = 75,
+        posX = 880, posY = 800,
         text = "redraw",
+        font = Font(size = 20)
     ).apply {
         visual = ColorVisual(221, 136, 136)
         onMouseClicked = {
@@ -119,9 +135,10 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         }
     }
     private val passButton = Button(
-        width = 140, height = 35,
-        posX = 900, posY = 1000,
+        width = 160, height = 75,
+        posX = 880, posY = 900,
         text = "pass",
+        font = Font(size = 20)
     ).apply {
         visual = ColorVisual(221, 136, 136)
         onMouseClicked = {
@@ -148,14 +165,14 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     )
     private val player2DeckSizeText = Label(
         width = 200, height = 60,
-        posX = 1240, posY = 480,
+        posX = 1350, posY = 480,
         alignment = Alignment.CENTER,
         text = "",
         font = Font(size = 20)
     )
     private val player2HandSizeText = Label(
         width = 200, height = 60,
-        posX = 1190, posY = 800,
+        posX = 1280, posY = 800,
         alignment = Alignment.CENTER,
         text = "",
         font = Font(size = 20)
@@ -169,7 +186,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             centerDeck1, player1Hand, player1DrawDeck,
             centerDeck2, player2Hand, player2DrawDeck,
             currentPlayerText, player1Text, player2Text,
-            redrawButton, passButton,
+            redrawButton, passButton, currentSelectText,
             player1DeckSizeText,player1HandSizeText,
             player2DeckSizeText,player2HandSizeText
         )
@@ -199,9 +216,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         refreshNumber()
         flipHand(currentPlayer)
 
-
-        redrawButton.isDisabled = !rootService.playerActionService.canRedrawHand()
-        passButton.isDisabled = !rootService.playerActionService.canPass()
+        buttonEnabled()
     }
 
     private fun initializeCardView(cards: MutableList<Card>, cardStack: CardStack<CardView>,
@@ -240,6 +255,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             ).apply {
                 onMouseClicked = {
                     selectedCard = cardMap.backward(this)
+                    currentSelectText.text = selectedCard.toString()
                 }
             }
             if (flip) {
@@ -329,8 +345,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             game.player1 -> player2DrawDeck.isDisabled
             game.player2 -> player1DeckSizeText.isDisabled
         }
-        redrawButton.isDisabled = !rootService.playerActionService.canRedrawHand()
-        passButton.isDisabled = !rootService.playerActionService.canPass()
+        buttonEnabled()
     }
 
     private fun refreshNumber() {
@@ -405,6 +420,23 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 cardView.showFront()
                 handView.add(cardView)
             }
+        }
+    }
+
+    private fun buttonEnabled() {
+        if (rootService.playerActionService.canRedrawHand()) {
+            redrawButton.visual = ColorVisual(221, 136, 136)
+            redrawButton.isDisabled = false
+        } else {
+            redrawButton.visual = ColorVisual(100, 100, 100)
+            redrawButton.isDisabled = true
+        }
+        if (rootService.playerActionService.canPass()) {
+            passButton.visual = ColorVisual(221, 136, 136)
+            redrawButton.isDisabled = false
+        } else {
+            passButton.visual = ColorVisual(100, 100, 100)
+            passButton.isDisabled = true
         }
     }
 }
