@@ -225,7 +225,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 numMap.removeBackward(card)
             }
             if (flip) {
-                //cardView.isFocusable = true
                 cardView.showFront()
             }
             cardStack.add(cardView)
@@ -248,10 +247,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             ).apply {
                 this.isFocusable = true
                 onMouseClicked = {
-                    //if (selectedCardView == -1){
-                        val card = cardMap.backward(this)
-                        selectedCardView = (card.suit.ordinal) * 100 + (card.value.ordinal)
-
+                    val cardFromMap = cardMap.backward(this)
+                    selectedCardView = (cardFromMap.suit.ordinal) * 100 + (cardFromMap.value.ordinal)
                 }
             }
 
@@ -366,7 +363,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         val game = rootService.currentGame
         checkNotNull(game) { "Game is not found." }
 
-        //val currentPlayer = game.currentPlayer()
 
         val currentPlayer = game.currentPlayer()
         currentPlayer.hand.forEach { card ->
