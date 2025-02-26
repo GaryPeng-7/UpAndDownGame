@@ -8,8 +8,6 @@ package gui
  * Default (empty) implementations are provided for all methods, so that implementing
  * UI classes only need to react to events relevant to them.
  *
- * @see AbstractRefreshingService
- *
  */
 interface Refreshable {
 
