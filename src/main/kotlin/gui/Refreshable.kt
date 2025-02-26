@@ -1,7 +1,5 @@
 package gui
 
-import entity.*
-
 interface Refreshable {
 
     fun refreshAfterGameStart() {}

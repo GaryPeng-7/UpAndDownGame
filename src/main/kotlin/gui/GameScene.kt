@@ -15,25 +15,30 @@ import tools.aqua.bgw.visual.ColorVisual
 
 class GameScene(private val rootService: RootService) : BoardGameScene(1920, 1080), Refreshable {
 
-    private var selectedCardView = -1
+    private val cardMap: BidirectionalMap<Card, CardView> = BidirectionalMap()
+    private var selectedCard : Card? = null
+
 
     private val centerDeck1 = CardStack<CardView>(posX = 800, posY = 540).apply {
         onMouseClicked = {
-            require(selectedCardView != -1) {"please select the card in your hand first"}
+            require(selectedCard!= null) {"please select the card in your hand first"}
             val game = rootService.currentGame
             checkNotNull(game)
-            val card = numMap.forward(selectedCardView)
-            if (game.currentPlayer().hand.contains(card)) {
+            if (game.currentPlayer().hand.contains(selectedCard)) {
                 game.let {
-                    rootService.playerActionService.playCard(card, 0)
+                    rootService.playerActionService.playCard(checkNotNull(selectedCard), 0)
                 }
             }
         }
     }
     private val player1DrawDeck = CardStack<CardView>(posX = 400, posY = 540).apply {
         onMouseClicked = {
-            rootService.currentGame?.let { game ->
-                rootService.playerActionService.drawCard()
+            val game = rootService.currentGame
+            checkNotNull(game)
+            if  (game.currentPlayer() == game.player1) {
+                rootService.currentGame?.let { game ->
+                    rootService.playerActionService.drawCard()
+                }
             }
         }
     }
@@ -45,23 +50,27 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         spacing = -60
     )
 
+
     private val centerDeck2 = CardStack<CardView>(posX = 990, posY = 540).apply {
         onMouseClicked = {
-            require(selectedCardView != -1) {"please select the card in your hand first"}
+            require(selectedCard != null) {"please select the card in your hand first"}
             val game = rootService.currentGame
             checkNotNull(game)
-            val card = numMap.forward(selectedCardView)
-            if (game.currentPlayer().hand.contains(card)) {
+            if (game.currentPlayer().hand.contains(selectedCard)) {
                 game.let {
-                    rootService.playerActionService.playCard(card, 1)
+                    rootService.playerActionService.playCard(checkNotNull(selectedCard), 1)
                 }
             }
         }
     }
     private val player2DrawDeck = CardStack<CardView>(posX = 1390, posY = 540).apply {
         onMouseClicked = {
-            rootService.currentGame?.let { game ->
-                rootService.playerActionService.drawCard()
+            val game = rootService.currentGame
+            checkNotNull(game)
+            if  (game.currentPlayer() == game.player2) {
+                rootService.currentGame?.let { game ->
+                    rootService.playerActionService.drawCard()
+                }
             }
         }
     }
@@ -72,6 +81,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         height = 200,
         spacing = -60
     )
+
 
     private val currentPlayerText = Label(
         width = 300, height = 80,
@@ -152,10 +162,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     )
 
 
-
-    private val cardMap: BidirectionalMap<Card, CardView> = BidirectionalMap()
-    private val numMap: BidirectionalMap<Int, Card> = BidirectionalMap()
-
     init {
         background = ColorVisual(108, 168, 59)
 
@@ -174,17 +180,12 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         checkNotNull(game) { "The game has not started yet." }
 
         cardMap.clear()
-        numMap.clear()
-
 
         val cardImageLoader = CardImageLoader()
         val currentPlayer = game.currentPlayer()
 
         initializeCardView(game.centerDeck1, centerDeck1, true, cardImageLoader)
         initializeCardView(game.player1.hand, player1Hand, false, cardImageLoader)
-        game.player1.hand.forEach { card ->
-            cardMap.forward(card).isFocusable = true
-        }
         initializeCardView(game.player1.drawDeck, player1DrawDeck, false, cardImageLoader)
         initializeCardView(game.centerDeck2, centerDeck2, true, cardImageLoader)
         initializeCardView(game.player2.hand, player2Hand, false, cardImageLoader)
@@ -194,14 +195,10 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         currentPlayerText.text = "current player: " + currentPlayer.name
         player1Text.text = "player1: " + game.player1.name
         player2Text.text = "player2: " + game.player2.name
-        player1DeckSizeText.text = game.player1.drawDeck.size.toString() + "/ 20"
-        player1HandSizeText.text = game.player1.hand.size.toString() + "/ 10"
-        player2DeckSizeText.text = game.player2.drawDeck.size.toString() + "/ 20"
-        player2HandSizeText.text = game.player2.hand.size.toString() + "/ 10"
 
-        currentPlayer.hand.forEach { card ->
-            flipCardView(cardMap.forward(card))
-        }
+        refreshNumber()
+        flipHand(currentPlayer)
+
 
         redrawButton.isDisabled = !rootService.playerActionService.canRedrawHand()
         passButton.isDisabled = !rootService.playerActionService.canPass()
@@ -220,22 +217,18 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 back = cardImageLoader.backImage,
             )
 
-            if (cardMap.containsForward(card)){
-                cardMap.removeForward(card)
-                numMap.removeBackward(card)
-            }
             if (flip) {
                 cardView.showFront()
             }
             cardStack.add(cardView)
             cardMap.add(card to cardView)
-            numMap.add((card.suit.ordinal) * 100 + (card.value.ordinal) to card)
         }
 
     }
 
     private fun initializeCardView(cards: MutableList<Card>, linearLayout: LinearLayout<CardView>,
-                                   flip: Boolean, cardImageLoader: CardImageLoader) {
+                                   flip: Boolean, cardImageLoader: CardImageLoader
+    ) {
         linearLayout.clear()
 
         cards.forEach { card ->
@@ -245,55 +238,33 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 front = cardImageLoader.frontImageFor(card.suit, card.value),
                 back = cardImageLoader.backImage,
             ).apply {
-                this.isFocusable = true
                 onMouseClicked = {
-                    val cardFromMap = cardMap.backward(this)
-                    selectedCardView = (cardFromMap.suit.ordinal) * 100 + (cardFromMap.value.ordinal)
+                    selectedCard = cardMap.backward(this)
                 }
-            }
-
-            if (cardMap.containsForward(card)){
-                cardMap.removeForward(card)
-                numMap.removeBackward(card)
             }
             if (flip) {
                 cardView.showFront()
             }
             linearLayout.add(cardView)
             cardMap.add(card to cardView)
-            numMap.add((card.suit.ordinal) * 100 + (card.value.ordinal) to card)
         }
-
     }
 
     override fun refreshAfterPlayCard(centerDeck: Int) {
         val game = rootService.currentGame
         checkNotNull(game) { "Game is not found." }
 
-        val currentPlayer = game .currentPlayer()
+        val cardView = cardMap.forward(game.getCenterDeck(centerDeck).last())
+        cardView.onMouseClicked = null
+        cardView.removeFromParent()
 
         when (game.getCenterDeck(centerDeck)) {
-            game.centerDeck1 -> {
-                val cardView = cardMap.forward(game.getCenterDeck(centerDeck).last())
-                val cardImageLoader = CardImageLoader()
-                cardView.removeFromParent()
-                initializeCardView(game.getCenterDeck(centerDeck), centerDeck1, true, cardImageLoader)
-            }
-            game.centerDeck2 -> {
-                val cardView = cardMap.forward(game.getCenterDeck(centerDeck).last())
-                val cardImageLoader = CardImageLoader()
-                cardView.removeFromParent()
-                initializeCardView(game.getCenterDeck(centerDeck), centerDeck2, true, cardImageLoader)
-                //centerDeck2.add(cardView)
-            }
+            game.centerDeck1 -> centerDeck1.add(cardView)
+            game.centerDeck2 -> centerDeck2.add(cardView)
         }
-        player1DeckSizeText.text = game.player1.drawDeck.size.toString() + "/ 20"
-        player1HandSizeText.text = game.player1.hand.size.toString() + "/ 10"
-        player2DeckSizeText.text = game.player2.drawDeck.size.toString() + "/ 20"
-        player2HandSizeText.text = game.player2.hand.size.toString() + "/ 10"
-        currentPlayer.hand.forEach { card ->
-            flipCardView(cardMap.forward(card))
-        }
+
+        refreshNumber()
+        flipHand()
     }
 
     override fun refreshAfterDrawCard() {
@@ -301,28 +272,25 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         checkNotNull(game) { "Game is not found." }
 
         val currentPlayer = game .currentPlayer()
+        val cardView = cardMap.forward(currentPlayer.hand.last())
+        cardView.apply {
+            cardView.showFront()
+            onMouseClicked = {
+                selectedCard = cardMap.backward(this)
+            }
+        }
+        cardView.removeFromParent()
 
         when (currentPlayer) {
             game.player1 -> {
-                val cardView = cardMap.forward(currentPlayer.hand.last())
-                val cardImageLoader = CardImageLoader()
-                cardView.removeFromParent()
-                initializeCardView(game.player1.hand, player1Hand, true, cardImageLoader)
+                player1Hand.add(cardView)
             }
             game.player2 -> {
-                val cardView = cardMap.forward(currentPlayer.hand.last())
-                val cardImageLoader = CardImageLoader()
-                cardView.removeFromParent()
-                initializeCardView(game.player2.hand, player2Hand, true, cardImageLoader)
+                player2Hand.add(cardView)
                 }
             }
-        player1DeckSizeText.text = game.player1.drawDeck.size.toString() + "/ 20"
-        player1HandSizeText.text = game.player1.hand.size.toString() + "/ 10"
-        player2DeckSizeText.text = game.player2.drawDeck.size.toString() + "/ 20"
-        player2HandSizeText.text = game.player2.hand.size.toString() + "/ 10"
-        currentPlayer.hand.forEach { card ->
-            flipCardView(cardMap.forward(card))
-        }
+        refreshNumber()
+        flipHand()
     }
 
     override fun refreshAfterRedrawHand() {
@@ -330,33 +298,22 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         checkNotNull(game) { "Game is not found." }
 
         val currentPlayer = game.currentPlayer()
-        val cardImageLoader = CardImageLoader()
-
         when (currentPlayer) {
             game.player1 -> {
-                initializeCardView(currentPlayer.drawDeck, player1DrawDeck, false, cardImageLoader)
-                initializeCardView(currentPlayer.hand, player1Hand, true, cardImageLoader)
+                shuffleView(currentPlayer.hand, currentPlayer.drawDeck, player1Hand, player1DrawDeck)
             }
             game.player2 -> {
-                initializeCardView(currentPlayer.drawDeck, player2DrawDeck, false, cardImageLoader)
-                initializeCardView(currentPlayer.hand, player2Hand, true, cardImageLoader)
+                shuffleView(currentPlayer.hand, currentPlayer.drawDeck, player2Hand, player2DrawDeck)
             }
         }
-        player1DeckSizeText.text = game.player1.drawDeck.size.toString() + "/ 20"
-        player1HandSizeText.text = game.player1.hand.size.toString() + "/ 10"
-        player2DeckSizeText.text = game.player2.drawDeck.size.toString() + "/ 20"
-        player2HandSizeText.text = game.player2.hand.size.toString() + "/ 10"
-        currentPlayer.hand.forEach { card ->
-            flipCardView(cardMap.forward(card))
-        }
+        refreshNumber()
+        flipHand()
     }
 
     override fun refreshAfterAfterPass() {
         val game = rootService.currentGame
         checkNotNull(game)
-        game.currentPlayer().hand.forEach { card ->
-            flipCardView(cardMap.forward(card))
-        }
+        flipHand()
     }
 
     override fun refreshAfterStartTurn() {
@@ -365,19 +322,89 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
 
         val currentPlayer = game.currentPlayer()
-        currentPlayer.hand.forEach { card ->
-            flipCardView(cardMap.forward(card))
-        }
+        flipHand(currentPlayer)
         currentPlayerText.text = "current player: " + currentPlayer.name
 
+        when (currentPlayer) {
+            game.player1 -> player2DrawDeck.isDisabled
+            game.player2 -> player1DeckSizeText.isDisabled
+        }
         redrawButton.isDisabled = !rootService.playerActionService.canRedrawHand()
         passButton.isDisabled = !rootService.playerActionService.canPass()
     }
 
-    private fun flipCardView(cardView: CardView) {
-        when (cardView.currentSide) {
-            CardView.CardSide.BACK -> cardView.showFront()
-            CardView.CardSide.FRONT -> cardView.showBack()
+    private fun refreshNumber() {
+        val game = rootService.currentGame
+        checkNotNull(game)
+        player1DeckSizeText.text = game.player1.drawDeck.size.toString() + "/ 20"
+        player1HandSizeText.text = game.player1.hand.size.toString() + "/ 10"
+        player2DeckSizeText.text = game.player2.drawDeck.size.toString() + "/ 20"
+        player2HandSizeText.text = game.player2.hand.size.toString() + "/ 10"
+    }
+
+    private fun flipHand() {
+        val game = rootService.currentGame
+        checkNotNull(game)
+        game.currentPlayer().hand.forEach { card ->
+            cardMap.forward(card).flip()
+        }
+    }
+
+    private fun flipHand(player: Player) {
+        player.hand.forEach { card ->
+            cardMap.forward(card).flip()
+        }
+    }
+
+    private fun shuffleView(hand : MutableList<Card>, drawDeck: MutableList<Card>,
+                            handView : LinearLayout<CardView>, stackView : CardStack<CardView>) {
+
+        val stackIterator = stackView.iterator()
+        val handIterator = handView.iterator()
+        val allCards : List<Card> = drawDeck + hand
+        println(allCards)
+        val oriStackList = mutableListOf<CardView>()
+        val oriHandList = mutableListOf<CardView>()
+        val numList = mutableListOf<Int>()
+
+        stackIterator.forEach { cardView ->
+            cardView.onMouseClicked = null
+            oriStackList.add(cardView)
+            val card = cardMap.backward(cardView)
+            numList.add(allCards.indexOf(card))
+        }
+
+
+        handIterator.forEach { cardView ->
+            cardView.apply {
+                onMouseClicked = {
+                    selectedCard = cardMap.backward(this)
+                }
+            }
+            oriHandList.add(cardView)
+            val card = cardMap.backward(cardView)
+            numList.add(allCards.indexOf(card))
+        }
+
+        stackView.clear()
+        handView.clear()
+        val allList = oriStackList + oriHandList
+        val correspondMap : MutableMap<Int, CardView> = mutableMapOf()
+        var i = 0
+        for (num in numList) {
+            correspondMap.put(num, allList[i++])
+        }
+        val sortedMap = correspondMap.toSortedMap()
+        println(correspondMap)
+        println(sortedMap)
+        sortedMap.forEach { num, cardView ->
+            if (num < drawDeck.size) {
+                cardView.showBack()
+                stackView.add(cardView)
+            } else {
+                cardView.showFront()
+                handView.add(cardView)
+            }
         }
     }
 }

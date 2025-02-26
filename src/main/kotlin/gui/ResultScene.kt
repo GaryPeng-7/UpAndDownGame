@@ -31,7 +31,7 @@ class ResultScene(private val rootService: RootService) : MenuScene(400, 1080), 
         visual = ColorVisual(221, 136, 136)
     }
 
-    private val restartButton = Button(
+    val restartButton = Button(
         width = 140, height = 35,
         posX = 210, posY = 240,
         text = "Restart"

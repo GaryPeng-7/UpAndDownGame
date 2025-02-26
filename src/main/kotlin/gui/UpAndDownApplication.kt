@@ -23,6 +23,9 @@ class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable 
     }
 
     private val resultScene = ResultScene(rootService).apply {
+        restartButton.onMouseClicked = {
+            this@UpAndDownApplication.showMenuScene(mainMenuScene)
+        }
         quitButton.onMouseClicked = {
             exit()
         }
@@ -48,6 +51,7 @@ class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable 
 
     override fun refreshAfterSwitchPlayerTurn() {
         this.showMenuScene(waitingScene)
+
     }
 
     override fun refreshAfterEndGame() {

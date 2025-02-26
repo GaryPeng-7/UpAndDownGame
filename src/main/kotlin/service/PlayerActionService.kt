@@ -1,6 +1,7 @@
 package service
 
 import entity.*
+import kotlin.math.abs
 
 /**
  * Diese Klasse enthaelt alle Methoden, die mit Spielern zu tun haben,
@@ -22,7 +23,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
 
         // ueberpruefe, ob man die Karte auf den Stapel ablegen kann
         val centerCard = game.getCenterDeck(centerDeck).last()
-        val difference = Math.abs(card.value.compareTo(centerCard.value))
+        val difference = abs(card.value.compareTo(centerCard.value))
         val canPlay : Boolean = when (difference) {
             1 -> true
             2 -> centerCard.suit.compareTo(card.suit) == 0
@@ -138,7 +139,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         // berechne die Differenz der Handkarten sowohl mit der linken Karte
         // als auch mit der rechten Karten
         for (card in game.currentPlayer().hand) {
-            difference = Math.abs(card.value.compareTo(centerLeftCard.value))
+            difference = abs(card.value.compareTo(centerLeftCard.value))
             if (card.suit.compareTo(centerLeftCard.suit) == 0) {
                 if (difference == 2) difference--
                 if (difference == 11) difference ++
@@ -147,7 +148,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
                 return true
             }
 
-            difference = Math.abs(card.value.compareTo(centerRightCard.value))
+            difference = abs(card.value.compareTo(centerRightCard.value))
             if (card.suit.compareTo(centerRightCard.suit) == 0) {
                 if (difference == 2) difference--
                 if (difference == 11) difference ++
@@ -233,7 +234,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
      * 1 = player 2 hat gewonnen
      * 2 = Unentschieden
      */
-    fun showWinner() {
+    private fun showWinner() {
         val game = rootService.currentGame
         checkNotNull(game)
 
