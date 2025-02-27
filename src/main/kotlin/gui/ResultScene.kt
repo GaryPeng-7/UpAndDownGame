@@ -21,10 +21,11 @@ class ResultScene(private val rootService: RootService) : MenuScene(400, 1080), 
         font = Font(size = 22)
     )
 
-    private val result = Label(
-        width = 100, height = 35,
+     private val result = Label(
+        width = 300, height = 50,
         posX = 50, posY = 125,
-        text = ""
+        text = "",
+        font = Font(size = 36)
     )
 
 
@@ -60,9 +61,9 @@ class ResultScene(private val rootService: RootService) : MenuScene(400, 1080), 
         checkNotNull(game)
 
         when (game.winner) {
-            0 -> headlineLabel.text = game.player1.name + " won"
-            1 -> headlineLabel.text = game.player2.name + " won"
-            2 -> headlineLabel.text = "it's a tie"
+            0 -> result.text = game.player1.name + " won"
+            1 -> result.text = game.player2.name + " won"
+            2 -> result.text = "it's a tie"
         }
     }
 }

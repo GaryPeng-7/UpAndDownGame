@@ -39,7 +39,8 @@ class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable 
             this,
             gameScene,
             mainMenuScene,
-            waitingScene
+            waitingScene,
+            resultScene
         )
 
         rootService.gameService.startNewGame("Kassel", "Duisburg")
@@ -60,4 +61,3 @@ class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable 
         showMenuScene(resultScene)
     }
 }
-

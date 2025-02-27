@@ -277,7 +277,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         }
 
         refreshNumber()
-        flipHand()
+        flipHand(game.currentPlayer())
     }
 
     override fun refreshAfterDrawCard() {
@@ -304,14 +304,16 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 }
             }
         refreshNumber()
-        flipHand()
+        flipHand(game.currentPlayer())
     }
 
     override fun refreshAfterRedrawHand() {
         val game = rootService.currentGame
         checkNotNull(game) { "Game is not found." }
 
-        when (val currentPlayer = game.currentPlayer()) {
+
+        val currentPlayer = game.currentPlayer()
+        when (currentPlayer) {
             game.player1 -> {
                 shuffleView(currentPlayer.hand, currentPlayer.drawDeck, player1Hand, player1DrawDeck)
             }
@@ -319,14 +321,15 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 shuffleView(currentPlayer.hand, currentPlayer.drawDeck, player2Hand, player2DrawDeck)
             }
         }
+
         refreshNumber()
-        flipHand()
+        flipHand(game.currentPlayer())
     }
 
     override fun refreshAfterAfterPass() {
         val game = rootService.currentGame
         checkNotNull(game)
-        flipHand()
+        flipHand(game.currentPlayer())
     }
 
     override fun refreshAfterStartTurn() {
@@ -357,15 +360,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         player2HandSizeText.text = game.player2.hand.size.toString() + "/ 10"
     }
 
-    // private function to flip the cards in the hand
-    private fun flipHand() {
-        val game = rootService.currentGame
-        checkNotNull(game)
-        game.currentPlayer().hand.forEach { card ->
-            cardMap.forward(card).flip()
-        }
-    }
-
     private fun flipHand(player: Player) {
         player.hand.forEach { card ->
             cardMap.forward(card).flip()
@@ -376,66 +370,24 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     private fun shuffleView(hand : MutableList<Card>, drawDeck: MutableList<Card>,
                             handView : LinearLayout<CardView>, stackView : CardStack<CardView>) {
 
-        // the iterators for both of the container
-        val stackIterator = stackView.iterator()
-        val handIterator = handView.iterator()
-        // to merge the cards into a bigger list
-        val allCards : List<Card> = drawDeck + hand
-        // the lists to save the original container contents
-        val oriStackList = mutableListOf<CardView>()
-        val oriHandList = mutableListOf<CardView>()
-        // the list to record the position where the cards really are
-        val numList = mutableListOf<Int>()
-
-
-        // ignore this section
-        //numList.forEachIndexed { index, i ->  }
-        //for (index in 0..<numList.size step 2) {
-        //    val i = numList[index]
-        //}
-
-
-
-        stackIterator.forEach { cardView ->
-            cardView.onMouseClicked = null
-            oriStackList.add(cardView)
-            val card = cardMap.backward(cardView)
-            numList.add(allCards.indexOf(card))
-        }
-
-        handIterator.forEach { cardView ->
-            cardView.apply {
+        handView.clear()
+        stackView.clear()
+        hand.forEach { card ->
+            val cardView = cardMap.forward(card).apply {
+                this.showFront()
                 onMouseClicked = {
                     selectedCard = cardMap.backward(this)
                     currentSelectText.text = selectedCard.toString()
                 }
             }
-            oriHandList.add(cardView)
-            val card = cardMap.backward(cardView)
-            numList.add(allCards.indexOf(card))
+            handView.add(cardView)
         }
 
-        stackView.clear()
-        handView.clear()
-
-        // merge the lists and make a connection between the original cardviews
-        // and where they should actually go
-        val allList = oriStackList + oriHandList
-        val correspondMap : MutableMap<Int, CardView> = mutableMapOf()
-        for ((counter, num) in numList.withIndex()) {
-            correspondMap[num] = allList[counter]
-        }
-        // sorted the map from 0 in order to loop through it with the right sequence
-        // and assign them back to the original container
-        val sortedMap = correspondMap.toSortedMap()
-        sortedMap.forEach { (num, cardView) ->
-            if (num < drawDeck.size) {
-                cardView.showBack()
-                stackView.add(cardView)
-            } else {
-                cardView.showFront()
-                handView.add(cardView)
-            }
+        drawDeck.forEach { card ->
+            val cardView = cardMap.forward(card)
+            cardView.showBack()
+            cardView.onMouseClicked = null
+            stackView.add(cardView)
         }
     }
 

@@ -21,16 +21,7 @@ class MainMenuScene(private val rootService: RootService) : MenuScene(400, 1080)
         width = 140, height = 35,
         posX = 210, posY = 240,
         text = "Start"
-    ).apply {
-        visual = ColorVisual(136, 221, 136)
-        onMouseClicked = {
-            rootService.gameService.startNewGame(
-                p1Input.text.trim(),
-                p2Input.text.trim()
-            )
-        }
-    }
-
+    )
 
     private val headlineLabel = Label(
         width = 300, height = 50, posX = 50, posY = 50,
@@ -63,10 +54,6 @@ class MainMenuScene(private val rootService: RootService) : MenuScene(400, 1080)
         prompt = "please enter..."
     )
 
-
-
-
-
     val quitButton = Button(
         width = 140, height = 35,
         posX = 50, posY = 240,
@@ -85,15 +72,21 @@ class MainMenuScene(private val rootService: RootService) : MenuScene(400, 1080)
             startButton, quitButton
         )
 
-        p1Input.apply {
-            onKeyPressed = {
-                startButton.isDisabled = this.text.isBlank() || p2Input.text.isBlank()
+        p1Input.onKeyPressed = {
+                startButton.isDisabled = p1Input.text.isBlank() || p2Input.text.isBlank()
             }
-        }
 
-        p2Input.apply {
-            onKeyPressed = {
-                startButton.isDisabled = p1Input.text.isBlank() || this.text.isBlank()
+        p2Input.onKeyPressed = {
+                startButton.isDisabled = p1Input.text.isBlank() || p2Input.text.isBlank()
+            }
+
+        startButton.apply {
+            visual = ColorVisual(136, 221, 136)
+            onMouseClicked = {
+                rootService.gameService.startNewGame(
+                    p1Input.text.trim(),
+                    p2Input.text.trim()
+                )
             }
         }
     }
