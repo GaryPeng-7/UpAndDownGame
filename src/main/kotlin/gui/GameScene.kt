@@ -387,10 +387,13 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         // the list to record the position where the cards really are
         val numList = mutableListOf<Int>()
 
-        numList.forEachIndexed { index, i ->  }
-        for (index in 0..<numList.size step 2) {
-            val i = numList[index]
-        }
+
+        // ignore this section
+        //numList.forEachIndexed { index, i ->  }
+        //for (index in 0..<numList.size step 2) {
+        //    val i = numList[index]
+        //}
+
 
 
         stackIterator.forEach { cardView ->

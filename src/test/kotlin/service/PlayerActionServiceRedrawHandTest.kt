@@ -1,6 +1,7 @@
 package service
 
 import entity.*
+import gui.Refreshable
 import kotlin.test.*
 
 /**
@@ -12,10 +13,12 @@ class PlayerActionServiceRedrawHandTest {
     /**
      * die Initialisierungsfunktion fuer das Spiel
      */
-    fun setUp() : RootService {
+    fun setUp(vararg refreshables: Refreshable) : RootService {
         rootService.gameService.startNewGame("Kassel", "Duisburg")
         val game = rootService.currentGame
         checkNotNull(game)
+        refreshables.forEach { rootService.addRefreshables(it) }
+
 
         /**
          * Der Spieler hat 8 Handkarten und eine Karte im Nachziehstapel
@@ -37,6 +40,22 @@ class PlayerActionServiceRedrawHandTest {
 
         return rootService
     }
+
+
+    /**
+     * Testfall:
+     * das Spiel existiert nicht
+     */
+    @Test
+    fun testGameNull() {
+        val rootService = setUp()
+
+        rootService.currentGame = null
+        assertFails{
+            rootService.playerActionService.redrawHand()
+        }
+    }
+
 
     /**
      * Testfall:
@@ -75,6 +94,8 @@ class PlayerActionServiceRedrawHandTest {
     @Test
     fun testSuccess() {
         val rootService = setUp()
+        val testRefreshable = TestRefreshable()
+        rootService.addRefreshables(testRefreshable)
 
         val game = rootService.currentGame
         assertNotNull(game)
@@ -87,5 +108,7 @@ class PlayerActionServiceRedrawHandTest {
         assertEquals(game.player1.drawDeck.size, cardSum - 5)
         assertFalse(game.lastPass)
         assertEquals(game.currentPlayer, 1)
+        assertTrue(testRefreshable.refreshAfterRedrawHandCalled)
+        assertTrue(testRefreshable.refreshAfterSwitchPlayerTurnCalled)
     }
 }

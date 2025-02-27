@@ -43,6 +43,20 @@ class PlayerActionServiceCanPassTest {
 
     /**
      * Testfall:
+     * das Spiel existiert nicht
+     */
+    @Test
+    fun testGameNull() {
+        val rootService = setUp()
+
+        rootService.currentGame = null
+        assertFails{
+            rootService.playerActionService.canPass()
+        }
+    }
+
+    /**
+     * Testfall:
      * wenn man Karten spielen darf
      */
     @Test

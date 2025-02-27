@@ -34,6 +34,21 @@ class PlayerActionServiceCanPlayCardTest {
 
     /**
      * Testfall:
+     * das Spiel existiert nicht
+     */
+    @Test
+    fun testGameNull() {
+        val rootService = setUp()
+
+        rootService.currentGame = null
+        assertFails{
+            rootService.playerActionService.canPlayCard()
+        }
+    }
+
+
+    /**
+     * Testfall:
      * gleiche Farbe + Diffenrenz = 1
      */
     @Test
@@ -59,6 +74,12 @@ class PlayerActionServiceCanPlayCardTest {
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.QUEEN))
+        assertTrue(rootService.playerActionService.canPlayCard())
+
+        game.centerDeck1.removeLast()
+        game.centerDeck2.removeLast()
+        game.centerDeck1.add(Card(CardSuit.DIAMONDS, CardValue.ACE))
+        game.centerDeck2.add(Card(CardSuit.CLUBS, CardValue.ACE))
         assertTrue(rootService.playerActionService.canPlayCard())
     }
 
@@ -119,6 +140,12 @@ class PlayerActionServiceCanPlayCardTest {
         assertNotNull(game)
 
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.THREE))
+        assertTrue(rootService.playerActionService.canPlayCard())
+
+        game.centerDeck1.removeLast()
+        game.centerDeck2.removeLast()
+        game.centerDeck1.add(Card(CardSuit.DIAMONDS, CardValue.ACE))
+        game.centerDeck2.add(Card(CardSuit.CLUBS, CardValue.ACE))
         assertTrue(rootService.playerActionService.canPlayCard())
     }
 

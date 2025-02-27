@@ -41,6 +41,20 @@ class PlayerActionServiceCanDrawCardTest {
 
     /**
      * Testfall:
+     * das Spiel existiert nicht
+     */
+    @Test
+    fun testGameNull() {
+        val rootService = setUp()
+
+        rootService.currentGame = null
+        assertFails{
+            rootService.playerActionService.canDrawCard()
+        }
+    }
+
+    /**
+     * Testfall:
      * keine Karte im Nachziehstapel
      */
     @Test

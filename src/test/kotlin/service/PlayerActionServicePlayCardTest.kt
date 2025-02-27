@@ -34,12 +34,19 @@ class PlayerActionServicePlayCardTest {
         return rootService
     }
 
+    /**
+     * Testfall:
+     * das Spiel existiert nicht
+     */
     @Test
     fun testGameNull() {
         val rootService = setUp()
 
         rootService.currentGame = null
-        assertNull(rootService.currentGame)
+        val card = Card(CardSuit.CLUBS, CardValue.TWO)
+        assertFails{
+            rootService.playerActionService.playCard(card, 0)
+        }
     }
 
     /**
@@ -56,11 +63,9 @@ class PlayerActionServicePlayCardTest {
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.TWO))
 
         // expected to be successful
-        assertFails{
-            assertFails{
-                rootService.playerActionService.playCard(game.player1.hand.last(), 0)
-            }
-        }
+
+        rootService.playerActionService.playCard(game.player1.hand.last(), 0)
+
     }
 
     /**
@@ -77,11 +82,8 @@ class PlayerActionServicePlayCardTest {
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.THREE))
 
         // expected to be successful
-        assertFails{
-            assertFails{
-                rootService.playerActionService.playCard(game.player1.hand.last(), 0)
-            }
-        }
+        rootService.playerActionService.playCard(game.player1.hand.last(), 0)
+
     }
 
     /**
@@ -98,11 +100,8 @@ class PlayerActionServicePlayCardTest {
         game.player1.hand.add(Card(CardSuit.DIAMONDS, CardValue.TWO))
 
         // expected to be successful
-        assertFails{
-            assertFails{
-                rootService.playerActionService.playCard(game.player1.hand.last(), 0)
-            }
-        }
+        rootService.playerActionService.playCard(game.player1.hand.last(), 0)
+
     }
 
     /**
@@ -112,8 +111,6 @@ class PlayerActionServicePlayCardTest {
     @Test
     fun testDifferentSuit11() {
         val rootService = setUp()
-        val testRefreshable = TestRefreshable()
-        rootService.addRefreshables(testRefreshable)
 
         val game = rootService.currentGame
         assertNotNull(game)
@@ -124,9 +121,6 @@ class PlayerActionServicePlayCardTest {
         assertFails {
             rootService.playerActionService.playCard(game.player1.hand.last(), 0)
         }
-
-        assertFalse(testRefreshable.refreshAfterPlayCardCalled)
-
     }
 
     /**
@@ -143,11 +137,7 @@ class PlayerActionServicePlayCardTest {
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.KING))
 
         // expected to be successful
-        assertFails{
-            assertFails{
-                rootService.playerActionService.playCard(game.player1.hand.last(), 0)
-            }
-        }
+        rootService.playerActionService.playCard(game.player1.hand.last(), 0)
     }
 
     /**
@@ -164,11 +154,8 @@ class PlayerActionServicePlayCardTest {
         game.player1.hand.add(Card(CardSuit.CLUBS, CardValue.QUEEN))
 
         // expected to be successful
-        assertFails{
-            assertFails{
-                rootService.playerActionService.playCard(game.player1.hand.last(), 0)
-            }
-        }
+        rootService.playerActionService.playCard(game.player1.hand.last(), 0)
+
     }
 
     /**
@@ -185,11 +172,8 @@ class PlayerActionServicePlayCardTest {
         game.player1.hand.add(Card(CardSuit.DIAMONDS, CardValue.KING))
 
         // expected to be successful
-        assertFails{
-            assertFails{
-                rootService.playerActionService.playCard(game.player1.hand.last(), 0)
-            }
-        }
+        rootService.playerActionService.playCard(game.player1.hand.last(), 0)
+
     }
 
     /**
@@ -254,6 +238,8 @@ class PlayerActionServicePlayCardTest {
         assertTrue(game.centerDeck1.contains(Card(CardSuit.CLUBS, CardValue.QUEEN)))
         assertFalse(game.lastPass)
         assertEquals(game.currentPlayer, 1)
+        assertTrue(testRefreshable.refreshAfterPlayCardCalled)
+        assertTrue(testRefreshable.refreshAfterSwitchPlayerTurnCalled)
     }
 
 }

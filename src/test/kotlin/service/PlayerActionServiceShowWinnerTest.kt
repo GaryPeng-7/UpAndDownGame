@@ -1,6 +1,7 @@
 package service
 
 import entity.*
+import gui.Refreshable
 import kotlin.test.*
 
 /**
@@ -9,10 +10,12 @@ import kotlin.test.*
 class PlayerActionServiceShowWinnerTest {
     private val rootService = RootService()
 
-    private fun setUp() : RootService {
+    private fun setUp(vararg refreshables: Refreshable) : RootService {
         rootService.gameService.startNewGame("Kassel", "Duisburg")
         val game = rootService.currentGame
         checkNotNull(game)
+        refreshables.forEach { rootService.addRefreshables(it) }
+
 
         /**
          * alle stapel ausser den Spielstapeln sind leer
@@ -31,6 +34,7 @@ class PlayerActionServiceShowWinnerTest {
         return rootService
     }
 
+
     /**
      * Testfall:
      * wenn Spieler 1 keine Karten hat
@@ -38,6 +42,8 @@ class PlayerActionServiceShowWinnerTest {
     @Test
     fun testPlayer1HandEmpty() {
         val rootService = setUp()
+        val testRefreshable = TestRefreshable()
+        rootService.addRefreshables(testRefreshable)
 
         val game = rootService.currentGame
         assertNotNull(game)
@@ -49,6 +55,7 @@ class PlayerActionServiceShowWinnerTest {
         rootService.playerActionService.playCard(player1.hand.last(), 0)
 
         assertEquals(game.winner, 0)
+        assertTrue(testRefreshable.refreshAfterEndGameCalled)
     }
 
     /**
@@ -58,6 +65,8 @@ class PlayerActionServiceShowWinnerTest {
     @Test
     fun testPlayer2HandEmpty() {
         val rootService = setUp()
+        val testRefreshable = TestRefreshable()
+        rootService.addRefreshables(testRefreshable)
 
         val game = rootService.currentGame
         assertNotNull(game)
@@ -68,8 +77,9 @@ class PlayerActionServiceShowWinnerTest {
         player2.hand.add(Card(CardSuit.CLUBS, CardValue.TWO))
         rootService.playerActionService.playCard(player2.hand.last(), 0)
 
-        println(player2)
         assertEquals(game.winner, 1)
+        assertTrue(testRefreshable.refreshAfterEndGameCalled)
+
     }
 
     /**
@@ -79,6 +89,8 @@ class PlayerActionServiceShowWinnerTest {
     @Test
     fun testPlayer1HandLess() {
         val rootService = setUp()
+        val testRefreshable = TestRefreshable()
+        rootService.addRefreshables(testRefreshable)
 
         val game = rootService.currentGame
         assertNotNull(game)
@@ -93,6 +105,7 @@ class PlayerActionServiceShowWinnerTest {
         rootService.playerActionService.pass()
 
         assertEquals(game.winner, 0)
+        assertTrue(testRefreshable.refreshAfterEndGameCalled)
     }
 
     /**
@@ -102,6 +115,8 @@ class PlayerActionServiceShowWinnerTest {
     @Test
     fun testPlayer2HandLess() {
         val rootService = setUp()
+        val testRefreshable = TestRefreshable()
+        rootService.addRefreshables(testRefreshable)
 
         val game = rootService.currentGame
         assertNotNull(game)
@@ -116,6 +131,7 @@ class PlayerActionServiceShowWinnerTest {
         rootService.playerActionService.pass()
 
         assertEquals(game.winner, 1)
+        assertTrue(testRefreshable.refreshAfterEndGameCalled)
     }
 
     /**
@@ -125,6 +141,8 @@ class PlayerActionServiceShowWinnerTest {
     @Test
     fun testTie() {
         val rootService = setUp()
+        val testRefreshable = TestRefreshable()
+        rootService.addRefreshables(testRefreshable)
 
         val game = rootService.currentGame
         assertNotNull(game)
@@ -140,5 +158,6 @@ class PlayerActionServiceShowWinnerTest {
         rootService.playerActionService.pass()
 
         assertEquals(game.winner, 2)
+        assertTrue(testRefreshable.refreshAfterEndGameCalled)
     }
 }
