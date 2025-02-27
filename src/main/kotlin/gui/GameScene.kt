@@ -2,6 +2,7 @@ package gui
 
 import service.*
 import entity.*
+import tools.aqua.bgw.animation.DelayAnimation
 import tools.aqua.bgw.components.container.CardStack
 import tools.aqua.bgw.components.container.LinearLayout
 import tools.aqua.bgw.components.gamecomponentviews.CardView
@@ -13,6 +14,7 @@ import tools.aqua.bgw.core.Color
 import tools.aqua.bgw.util.BidirectionalMap
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
+import tools.aqua.bgw.visual.ImageVisual
 
 /**
  * this is the main scene for the whole game, where it will be shown most of the time
@@ -38,9 +40,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             val game = rootService.currentGame
             checkNotNull(game)
             if (game.currentPlayer().hand.contains(selectedCard)) {
-                game.let {
                     rootService.playerActionService.playCard(checkNotNull(selectedCard), 0)
-                }
             }
         }
     }
@@ -68,9 +68,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             val game = rootService.currentGame
             checkNotNull(game)
             if (game.currentPlayer().hand.contains(selectedCard)) {
-                game.let {
                     rootService.playerActionService.playCard(checkNotNull(selectedCard), 1)
-                }
             }
         }
     }
@@ -95,70 +93,89 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
     // the labels
     private val currentSelectText = Label(
-        width = 360, height = 100,
-        posX = 770, posY = 400,
+        width = 100, height = 50,
+        posX = 910, posY = 460,
         alignment = Alignment.CENTER,
         text = "",
-        font = Font(size = 40)
+        font = Font(size = 40),
+        visual = ColorVisual(255,255,255,0.5)
+    )
+    private val currentPlayer1Indicator = Label(
+        width = 40, height = 40,
+        posX = 420, posY = 280,
+        alignment = Alignment.CENTER,
+        text = "",
+        visual = ImageVisual("cursor1.png")
+    )
+    private val currentPlayer2Indicator = Label(
+        width = 40, height = 40,
+        posX = 1420, posY = 280,
+        alignment = Alignment.CENTER,
+        text = "",
+        visual = ImageVisual("cursor1.png")
     )
     private val currentPlayerText = Label(
-        width = 360, height = 100,
-        posX = 770, posY = 150,
+        width = 450, height = 100,
+        posX = 740, posY = 100,
         alignment = Alignment.CENTER,
         text = "",
-        font = Font(size = 32)
+        font = Font(size = 40, Color.WHITE),
+        visual = ColorVisual(0,0,0,0.5)
     )
     private val player1Text = Label(
         width = 300, height = 80,
         posX = 300, posY = 300,
         alignment = Alignment.CENTER,
         text = "",
-        font = Font(size = 28)
+        font = Font(size = 32),
     )
     private val player2Text = Label(
         width = 300, height = 80,
         posX = 1300, posY = 300,
         alignment = Alignment.CENTER,
         text = "",
-        font = Font(size = 28)
+        font = Font(size = 32)
     )
     private val player1DeckSizeText = Label(
-        width = 200, height = 60,
-        posX = 340, posY = 480,
+        width = 100, height = 50,
+        posX = 410, posY = 480,
         alignment = Alignment.CENTER,
         text = "",
-        font = Font(size = 20)
+        font = Font(size = 24, Color.WHITE),
+        visual = ColorVisual(0,0,0,0.5)
     )
     private val player1HandSizeText = Label(
-        width = 200, height = 60,
-        posX = 250, posY = 800,
+        width = 100, height = 50,
+        posX = 200, posY = 810,
         alignment = Alignment.CENTER,
-        text = "",
-        font = Font(size = 20)
+        font = Font(size = 24, Color.WHITE),
+        visual = ColorVisual(0,0,0,0.5)
     )
     private val player2DeckSizeText = Label(
-        width = 200, height = 60,
-        posX = 1350, posY = 480,
+        width = 100, height = 50,
+        posX = 1400, posY = 480,
         alignment = Alignment.CENTER,
         text = "",
-        font = Font(size = 20)
+        font = Font(size = 24, Color.WHITE),
+        visual = ColorVisual(0,0,0,0.5)
     )
     private val player2HandSizeText = Label(
-        width = 200, height = 60,
-        posX = 1280, posY = 800,
+        width = 100, height = 50,
+        posX = 1360, posY = 810,
         alignment = Alignment.CENTER,
         text = "",
-        font = Font(size = 20)
+        font = Font(size = 24, Color.WHITE),
+        visual = ColorVisual(0,0,0,0.5)
     )
 
     // the buttons
     private val redrawButton = Button(
-        width = 160, height = 75,
-        posX = 880, posY = 800,
+        width = 180, height = 60,
+        posX = 870, posY = 800,
         text = "redraw",
-        font = Font(size = 20)
+        font = Font(size = 30)
     ).apply {
-        visual = ColorVisual(221, 136, 136)
+        visual = ColorVisual(255,255,255)
         onMouseClicked = {
             rootService.currentGame?.let { _ ->
                 rootService.playerActionService.redrawHand()
@@ -166,12 +183,11 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         }
     }
     private val passButton = Button(
-        width = 160, height = 75,
-        posX = 880, posY = 900,
+        width = 180, height = 60,
+        posX = 870, posY = 900,
         text = "pass",
-        font = Font(size = 20)
+        font = Font(size = 30)
     ).apply {
-        visual = ColorVisual(221, 136, 136)
         onMouseClicked = {
             rootService.currentGame?.let { _ ->
                 rootService.playerActionService.pass()
@@ -185,6 +201,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         addComponents(
             centerDeck1, player1Hand, player1DrawDeck,
             centerDeck2, player2Hand, player2DrawDeck,
+            currentPlayer1Indicator,currentPlayer2Indicator,
             currentPlayerText, player1Text, player2Text,
             redrawButton, passButton, currentSelectText,
             player1DeckSizeText,player1HandSizeText,
@@ -203,9 +220,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
         // to initialise all the cardviews
         initializeCardView(game.centerDeck1, centerDeck1, true, cardImageLoader)
+        initializeCardView(game.centerDeck2, centerDeck2, true, cardImageLoader)
         initializeCardView(game.player1.hand, player1Hand, cardImageLoader)
         initializeCardView(game.player1.drawDeck, player1DrawDeck, false, cardImageLoader)
-        initializeCardView(game.centerDeck2, centerDeck2, true, cardImageLoader)
         initializeCardView(game.player2.hand, player2Hand, cardImageLoader)
         initializeCardView(game.player2.drawDeck, player2DrawDeck, false, cardImageLoader)
 
@@ -213,6 +230,17 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         currentPlayerText.text = "current player: " + currentPlayer.name
         player1Text.text = "player1: " + game.player1.name
         player2Text.text = "player2: " + game.player2.name
+
+        when(game.currentPlayer()) {
+            game.player1 -> {
+                currentPlayer1Indicator.isVisible = true
+                currentPlayer2Indicator.isVisible = false
+            }
+            game.player2 -> {
+                currentPlayer1Indicator.isVisible = false
+                currentPlayer2Indicator.isVisible = true
+            }
+        }
 
         refreshNumber()
         flipHand(currentPlayer)
@@ -282,6 +310,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
     override fun refreshAfterDrawCard() {
         val game = rootService.currentGame
+        val delay = DelayAnimation(500)
         checkNotNull(game) { "Game is not found." }
 
         val currentPlayer = game .currentPlayer()
@@ -295,35 +324,47 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         }
         cardView.removeFromParent()
 
+
         when (currentPlayer) {
             game.player1 -> {
                 player1Hand.add(cardView)
+                delay.onFinished = {
+                    flipHand(game.player1)
+                }
             }
             game.player2 -> {
                 player2Hand.add(cardView)
+                delay.onFinished = {
+                    flipHand(game.player2)
+                }
                 }
             }
+        playAnimation(delay)
         refreshNumber()
-        flipHand(game.currentPlayer())
     }
 
     override fun refreshAfterRedrawHand() {
         val game = rootService.currentGame
+        val delay = DelayAnimation(1000)
         checkNotNull(game) { "Game is not found." }
 
 
-        val currentPlayer = game.currentPlayer()
-        when (currentPlayer) {
+        when (val currentPlayer = game.currentPlayer()) {
             game.player1 -> {
                 shuffleView(currentPlayer.hand, currentPlayer.drawDeck, player1Hand, player1DrawDeck)
+                delay.onFinished = {
+                    flipHand(game.player1)
+                }
             }
             game.player2 -> {
                 shuffleView(currentPlayer.hand, currentPlayer.drawDeck, player2Hand, player2DrawDeck)
+                delay.onFinished = {
+                    flipHand(game.player1)
+                }
             }
         }
-
+        playAnimation(delay)
         refreshNumber()
-        flipHand(game.currentPlayer())
     }
 
     override fun refreshAfterAfterPass() {
@@ -338,12 +379,21 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
 
         val currentPlayer = game.currentPlayer()
+
         flipHand(currentPlayer)
         currentPlayerText.text = "current player: " + currentPlayer.name
 
         when (currentPlayer) {
-            game.player1 -> player2DrawDeck.isDisabled
-            game.player2 -> player1DeckSizeText.isDisabled
+            game.player1 -> {
+                player2DrawDeck.isDisabled
+                currentPlayer1Indicator.isVisible = true
+                currentPlayer2Indicator.isVisible = false
+            }
+            game.player2 -> {
+                player1DeckSizeText.isDisabled
+                currentPlayer1Indicator.isVisible = false
+                currentPlayer2Indicator.isVisible = true
+            }
         }
         selectedCard = null
         currentSelectText.text = ""
@@ -394,21 +444,21 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     // private function to help track the buttons
     private fun buttonEnabled() {
         if (rootService.playerActionService.canRedrawHand()) {
-            redrawButton.visual = ColorVisual(221, 136, 136)
-            redrawButton.font = Font(color = Color.BLACK, size =20)
+            redrawButton.visual = ColorVisual(255,255,255)
+            redrawButton.font = Font(color = Color.BLACK, size =30)
             redrawButton.isDisabled = false
         } else {
-            redrawButton.visual = ColorVisual(100, 100, 100)
-            redrawButton.font = Font(color = Color.WHITE, size =20)
+            redrawButton.visual = ColorVisual(50, 50, 50)
+            redrawButton.font = Font(color = Color.WHITE, size =30)
             redrawButton.isDisabled = true
         }
         if (rootService.playerActionService.canPass()) {
-            passButton.visual = ColorVisual(221, 136, 136)
-            passButton.font = Font(color = Color.BLACK, size =20)
+            redrawButton.visual = ColorVisual(255,255,255)
+            passButton.font = Font(color = Color.BLACK, size =30)
             passButton.isDisabled = false
         } else {
-            passButton.visual = ColorVisual(100, 100, 100)
-            passButton.font = Font(color = Color.WHITE, size =20)
+            passButton.visual = ColorVisual(50, 50, 50)
+            passButton.font = Font(color = Color.WHITE, size =30)
             passButton.isDisabled = true
         }
     }

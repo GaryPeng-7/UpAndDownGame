@@ -6,6 +6,7 @@ import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
+import java.awt.Color
 
 /**
  * this class is used for showing the end game menu scene after the game is ended.
@@ -13,35 +14,31 @@ import tools.aqua.bgw.visual.ColorVisual
  * [restartButton] can be pressed to restart the game
  * [quitButton] can be pressed to quit the game
  */
-class ResultScene(private val rootService: RootService) : MenuScene(400, 1080), Refreshable {
-
-    private val headlineLabel = Label(
-        width = 300, height = 50, posX = 50, posY = 50,
-        text = "Result",
-        font = Font(size = 22)
-    )
+class ResultScene(private val rootService: RootService) : MenuScene(1920, 1080,
+    ColorVisual(Color.black)), Refreshable {
 
      private val result = Label(
-        width = 300, height = 50,
-        posX = 50, posY = 125,
-        text = "",
-        font = Font(size = 36)
+         width = 500, height = 80,
+         posX = 730, posY = 100,
+         text = "",
+         font = Font(size = 40, Color.black),
+         visual = ColorVisual(255,255,255,0.5)
     )
 
-
-
     val quitButton = Button(
-        width = 140, height = 35,
-        posX = 50, posY = 240,
-        text = "Quit"
+        width = 200, height = 50,
+        posX = 760, posY = 300,
+        text = "Quit",
+        font = Font(size = 28)
     ).apply {
         visual = ColorVisual(221, 136, 136)
     }
 
     val restartButton = Button(
-        width = 140, height = 35,
-        posX = 210, posY = 240,
-        text = "Restart"
+        width = 200, height = 50,
+        posX = 1000, posY = 300,
+        text = "Restart",
+        font = Font(size = 28)
     ).apply {
         visual = ColorVisual(136, 221, 136)
     }
@@ -50,7 +47,6 @@ class ResultScene(private val rootService: RootService) : MenuScene(400, 1080), 
     init {
         opacity = .5
         addComponents(
-            headlineLabel,
             result,
             restartButton, quitButton
         )

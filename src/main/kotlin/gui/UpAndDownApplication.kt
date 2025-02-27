@@ -1,7 +1,10 @@
 package gui
 
 import service.RootService
+import tools.aqua.bgw.animation.DelayAnimation
 import tools.aqua.bgw.core.BoardGameApplication
+import tools.aqua.bgw.style.BlurFilter
+import tools.aqua.bgw.visual.ImageVisual
 
 /**
  * Implementation of the BGW [BoardGameApplication] for the game application
@@ -44,17 +47,27 @@ class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable 
         )
 
         rootService.gameService.startNewGame("Kassel", "Duisburg")
+        val background = ImageVisual("background1.jpeg")
+        background.filters.blur = BlurFilter(5.0)
+        gameScene.background = background
         this.showGameScene(gameScene)
         this.showMenuScene(mainMenuScene, 0)
     }
 
     override fun refreshAfterGameStart() {
-        hideMenuScene()
+        val delay = DelayAnimation(500)
+        delay.onFinished = {
+            hideMenuScene()
+        }
+        gameScene.playAnimation(delay)
     }
 
     override fun refreshAfterSwitchPlayerTurn() {
-        showMenuScene(waitingScene)
-
+        val delay = DelayAnimation(500)
+        delay.onFinished = {
+            showMenuScene(waitingScene)
+        }
+        gameScene.playAnimation(delay)
     }
 
     override fun refreshAfterEndGame() {

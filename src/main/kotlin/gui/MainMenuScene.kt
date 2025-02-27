@@ -7,6 +7,7 @@ import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
+import java.awt.Color
 
 /**
  * this class is used for showing the starting game menu scene
@@ -15,49 +16,58 @@ import tools.aqua.bgw.visual.ColorVisual
  * [startButton] can be pressed to start the game
  * [quitButton] can be pressed to quit the game
  */
-class MainMenuScene(private val rootService: RootService) : MenuScene(400, 1080), Refreshable {
+class MainMenuScene(private val rootService: RootService) : MenuScene(1920, 1080,
+    ColorVisual(Color.black)), Refreshable {
 
     private val startButton = Button(
-        width = 140, height = 35,
-        posX = 210, posY = 240,
-        text = "Start"
+        width = 200, height = 50,
+        posX = 1010, posY = 440,
+        text = "Start",
+        font = Font(size = 28)
     )
 
     private val headlineLabel = Label(
-        width = 300, height = 50, posX = 50, posY = 50,
-        text = "Start New Game",
-        font = Font(size = 22)
+        width = 800, height = 100,
+        posX = 600, posY = 100,
+        text = "Welcome to UpAndDownGame",
+        font = Font(size = 40, Color.white),
+        visual = ColorVisual(0,0,0)
     )
 
     private val p1Label = Label(
-        width = 100, height = 35,
-        posX = 50, posY = 125,
-        text = "Player 1:"
+        width = 150, height = 65,
+        posX = 750, posY = 240,
+        text = "Player 1:",
+        font = Font(size = 28,Color.white)
     )
 
     private val p1Input: TextField = TextField(
-        width = 200, height = 35,
-        posX = 150, posY = 125,
-        text = "Kassel"
+        width = 300, height = 65,
+        posX = 910, posY = 240,
+        text = "Kassel",
+        font = Font(size = 28)
     )
 
     private val p2Label = Label(
-        width = 100, height = 35,
-        posX = 50, posY = 170,
-        text = "Player 2:"
+        width = 150, height = 65,
+        posX = 750, posY = 330,
+        text = "Player 2:",
+        font = Font(size = 28 ,Color.white)
     )
 
     private val p2Input: TextField = TextField(
-        width = 200, height = 35,
-        posX = 150, posY = 170,
+        width = 300, height = 65,
+        posX = 910, posY = 330,
         text = "Duisburg",
-        prompt = "please enter..."
+        font = Font(size = 28)
     )
 
+
     val quitButton = Button(
-        width = 140, height = 35,
-        posX = 50, posY = 240,
-        text = "Quit"
+        width = 200, height = 50,
+        posX = 760, posY = 440,
+        text = "Quit",
+        font = Font(size = 28)
     ).apply {
         visual = ColorVisual(221, 136, 136)
     }
