@@ -100,20 +100,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         font = Font(size = 40),
         visual = ColorVisual(255,255,255,0.5)
     )
-    private val currentPlayer1Indicator = Label(
-        width = 40, height = 40,
-        posX = 420, posY = 280,
-        alignment = Alignment.CENTER,
-        text = "",
-        visual = ImageVisual("cursor1.png")
-    )
-    private val currentPlayer2Indicator = Label(
-        width = 40, height = 40,
-        posX = 1420, posY = 280,
-        alignment = Alignment.CENTER,
-        text = "",
-        visual = ImageVisual("cursor1.png")
-    )
     private val currentPlayerText = Label(
         width = 450, height = 100,
         posX = 740, posY = 100,
@@ -201,7 +187,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         addComponents(
             centerDeck1, player1Hand, player1DrawDeck,
             centerDeck2, player2Hand, player2DrawDeck,
-            currentPlayer1Indicator,currentPlayer2Indicator,
             currentPlayerText, player1Text, player2Text,
             redrawButton, passButton, currentSelectText,
             player1DeckSizeText,player1HandSizeText,
@@ -231,20 +216,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         player1Text.text = "player1: " + game.player1.name
         player2Text.text = "player2: " + game.player2.name
 
-        when(game.currentPlayer()) {
-            game.player1 -> {
-                currentPlayer1Indicator.isVisible = true
-                currentPlayer2Indicator.isVisible = false
-            }
-            game.player2 -> {
-                currentPlayer1Indicator.isVisible = false
-                currentPlayer2Indicator.isVisible = true
-            }
-        }
-
         refreshNumber()
         flipHand(currentPlayer)
-
         buttonEnabled()
     }
 
@@ -337,8 +310,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 delay.onFinished = {
                     flipHand(game.player2)
                 }
-                }
             }
+        }
         playAnimation(delay)
         refreshNumber()
     }
@@ -380,24 +353,11 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
         val currentPlayer = game.currentPlayer()
 
-        flipHand(currentPlayer)
         currentPlayerText.text = "current player: " + currentPlayer.name
-
-        when (currentPlayer) {
-            game.player1 -> {
-                player2DrawDeck.isDisabled
-                currentPlayer1Indicator.isVisible = true
-                currentPlayer2Indicator.isVisible = false
-            }
-            game.player2 -> {
-                player1DeckSizeText.isDisabled
-                currentPlayer1Indicator.isVisible = false
-                currentPlayer2Indicator.isVisible = true
-            }
-        }
         selectedCard = null
         currentSelectText.text = ""
         buttonEnabled()
+        flipHand(currentPlayer)
     }
 
     // private function to update the numbers

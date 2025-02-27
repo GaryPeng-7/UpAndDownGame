@@ -19,28 +19,26 @@ class WaitingScene(private val rootService: RootService) : MenuScene(1920, 1080,
 
 
     private val currentPlayer = Label(
-        width = 400, height = 100,
-        posX = 750, posY = 180,
+        width = 800, height = 120,
+        posX = 560, posY = 400,
         text = "",
         alignment = Alignment.CENTER,
-        font = Font(size = 40, Color.WHITE)
+        font = Font(size = 72, Color.WHITE)
     )
 
-    val okButton = Button(
-        width = 300, height = 300,
-        posX = 800, posY = 300,
-        text = "OK",
-        font = Font(size = 72),
-        alignment = Alignment.CENTER
-        ).apply {
-        visual = ColorVisual(255, 255, 255,0.8)
+    val invisibleButton = Button(
+        width = 1920, height = 1080,
+        posX = 0, posY = 0,
+        text = "",
+    ).apply {
+        visual = ColorVisual(Color.TRANSPARENT)
     }
 
     init {
         opacity = .5
         addComponents(
             currentPlayer,
-            okButton
+            invisibleButton
         )
     }
 

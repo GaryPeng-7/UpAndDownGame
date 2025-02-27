@@ -22,7 +22,7 @@ class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable 
     }
 
     private val waitingScene = WaitingScene(rootService).apply {
-        okButton.onMouseClicked = {
+        invisibleButton.onMouseClicked = {
             gameScene.refreshAfterStartTurn()
             this@UpAndDownApplication.hideMenuScene()
         }
