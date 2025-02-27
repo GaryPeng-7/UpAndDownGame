@@ -34,7 +34,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     // decks and hands
     private val centerDeck1 = CardStack<CardView>(posX = 800, posY = 540).apply {
         onMouseClicked = {
-            require(selectedCard!= null) {"please select the card in your hand first"}
+            requireNotNull(selectedCard) {"please select the card in your hand first"}
             val game = rootService.currentGame
             checkNotNull(game)
             if (game.currentPlayer().hand.contains(selectedCard)) {
@@ -64,7 +64,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     )
     private val centerDeck2 = CardStack<CardView>(posX = 990, posY = 540).apply {
         onMouseClicked = {
-            require(selectedCard != null) {"please select the card in your hand first"}
+            requireNotNull(selectedCard) {"please select the card in your hand first"}
             val game = rootService.currentGame
             checkNotNull(game)
             if (game.currentPlayer().hand.contains(selectedCard)) {
@@ -386,6 +386,12 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         val oriHandList = mutableListOf<CardView>()
         // the list to record the position where the cards really are
         val numList = mutableListOf<Int>()
+
+        numList.forEachIndexed { index, i ->  }
+        for (index in 0..<numList.size step 2) {
+            val i = numList[index]
+        }
+
 
         stackIterator.forEach { cardView ->
             cardView.onMouseClicked = null

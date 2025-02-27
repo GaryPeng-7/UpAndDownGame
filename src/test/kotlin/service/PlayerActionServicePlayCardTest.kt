@@ -1,6 +1,7 @@
 package service
 
 import entity.*
+import gui.Refreshable
 import kotlin.test.*
 
 /**
@@ -12,10 +13,12 @@ class PlayerActionServicePlayCardTest {
     /**
      * die Initialisierungsfunktion fuer das Spiel
      */
-    fun setUp() : RootService {
+    fun setUp(vararg refreshables: Refreshable) : RootService {
         rootService.gameService.startNewGame("Kassel", "Duisburg")
         val game = rootService.currentGame
         checkNotNull(game)
+        refreshables.forEach { rootService.addRefreshables(it) }
+
 
         /**
          * der Spieler hat nur eine Karte: herat seven und
@@ -29,6 +32,14 @@ class PlayerActionServicePlayCardTest {
         game.currentPlayer = 0
 
         return rootService
+    }
+
+    @Test
+    fun testGameNull() {
+        val rootService = setUp()
+
+        rootService.currentGame = null
+        assertNull(rootService.currentGame)
     }
 
     /**
@@ -101,6 +112,8 @@ class PlayerActionServicePlayCardTest {
     @Test
     fun testDifferentSuit11() {
         val rootService = setUp()
+        val testRefreshable = TestRefreshable()
+        rootService.addRefreshables(testRefreshable)
 
         val game = rootService.currentGame
         assertNotNull(game)
@@ -111,6 +124,8 @@ class PlayerActionServicePlayCardTest {
         assertFails {
             rootService.playerActionService.playCard(game.player1.hand.last(), 0)
         }
+
+        assertFalse(testRefreshable.refreshAfterPlayCardCalled)
 
     }
 
@@ -224,6 +239,8 @@ class PlayerActionServicePlayCardTest {
     @Test
     fun testSuccess() {
         val rootService = setUp()
+        val testRefreshable = TestRefreshable()
+        rootService.addRefreshables(testRefreshable)
 
         val game = rootService.currentGame
         assertNotNull(game)

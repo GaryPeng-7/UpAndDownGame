@@ -12,7 +12,7 @@ import tools.aqua.bgw.visual.ColorVisual
  * next player's turn to play.
  * [okButton] can be pressed to continue the game
  */
-class WaitingScene(private val rootService: RootService) : MenuScene(400, 1080), Refreshable {
+class WaitingScene(private val rootService: RootService) : MenuScene(1920, 1080), Refreshable {
 
 
     private val currentPlayer = Label(

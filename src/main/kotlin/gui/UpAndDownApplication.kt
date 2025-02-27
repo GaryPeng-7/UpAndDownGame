@@ -48,16 +48,16 @@ class UpAndDownApplication : BoardGameApplication("UpAndDownGame"), Refreshable 
     }
 
     override fun refreshAfterGameStart() {
-        this.hideMenuScene()
+        hideMenuScene()
     }
 
     override fun refreshAfterSwitchPlayerTurn() {
-        this.showMenuScene(waitingScene)
+        showMenuScene(waitingScene)
 
     }
 
     override fun refreshAfterEndGame() {
-        this.showMenuScene(resultScene)
+        showMenuScene(resultScene)
     }
 }
 
