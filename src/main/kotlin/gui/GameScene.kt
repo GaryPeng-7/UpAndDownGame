@@ -14,7 +14,6 @@ import tools.aqua.bgw.core.Color
 import tools.aqua.bgw.util.BidirectionalMap
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
-import tools.aqua.bgw.visual.ImageVisual
 
 /**
  * this is the main scene for the whole game, where it will be shown most of the time

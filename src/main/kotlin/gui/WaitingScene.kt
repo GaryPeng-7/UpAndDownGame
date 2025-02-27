@@ -12,7 +12,7 @@ import tools.aqua.bgw.visual.ColorVisual
 /**
  * this class is used for showing the waiting menu when it's the
  * next player's turn to play.
- * [okButton] can be pressed to continue the game
+ * press anywhere to continue the game
  */
 class WaitingScene(private val rootService: RootService) : MenuScene(1920, 1080,
     ColorVisual(0,0,0)), Refreshable {
