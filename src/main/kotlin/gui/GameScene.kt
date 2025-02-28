@@ -211,11 +211,33 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         initializeCardView(game.player2.drawDeck, player2DrawDeck, false, cardImageLoader)
 
 
+        // update the text parts
         currentPlayerText.text = "current player: " + currentPlayer.name
         player1Text.text = "player1: " + game.player1.name
         player2Text.text = "player2: " + game.player2.name
-
         refreshNumber()
+
+        // enable und disable the selected card, which allows the current player not
+        // able to peek into what the other player has
+        when (currentPlayer) {
+            game.player1-> {
+                player1Hand.forEach { cardView ->
+                    cardView.isDisabled = false
+                }
+                player2Hand.forEach { cardView ->
+                    cardView.isDisabled = true
+                }
+            }
+            game.player2-> {
+                player1Hand.forEach { cardView ->
+                    cardView.isDisabled = true
+                }
+                player2Hand.forEach { cardView ->
+                    cardView.isDisabled = false
+                }
+            }
+        }
+
         flipHand(currentPlayer)
         buttonEnabled()
     }
@@ -331,7 +353,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             game.player2 -> {
                 shuffleView(currentPlayer.hand, currentPlayer.drawDeck, player2Hand, player2DrawDeck)
                 delay.onFinished = {
-                    flipHand(game.player1)
+                    flipHand(game.player2)
                 }
             }
         }
@@ -355,6 +377,27 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         currentPlayerText.text = "current player: " + currentPlayer.name
         selectedCard = null
         currentSelectText.text = ""
+
+        // enable und disable the selected card, which allows the current player not
+        // able to peek into what the other player has
+        when (currentPlayer) {
+            game.player1-> {
+                player1Hand.forEach { cardView ->
+                    cardView.isDisabled = false
+                }
+                player2Hand.forEach { cardView ->
+                    cardView.isDisabled = true
+                }
+            }
+            game.player2-> {
+                player1Hand.forEach { cardView ->
+                    cardView.isDisabled = true
+                }
+                player2Hand.forEach { cardView ->
+                    cardView.isDisabled = false
+                }
+            }
+        }
         buttonEnabled()
         flipHand(currentPlayer)
     }
