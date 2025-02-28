@@ -455,7 +455,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             redrawButton.isDisabled = true
         }
         if (rootService.playerActionService.canPass()) {
-            redrawButton.visual = ColorVisual(255,255,255)
+            passButton.visual = ColorVisual(255,255,255)
             passButton.font = Font(color = Color.BLACK, size =30)
             passButton.isDisabled = false
         } else {
