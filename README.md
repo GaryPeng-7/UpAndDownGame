@@ -1,7 +1,3 @@
-# SoPra Projekt 1 (Einzelprojekt)
-
-## Wichtige Links
-
-* Aktuelle Informationen zu diesem SoPra: https://sopra.cs.tu-dortmund.de/wiki/sopra/25a/start
-* Beispielprojekt Kartenspiel War: https://sopra-gitlab.cs.tu-dortmund.de/internal/bgw-war
-* Weitere Links: https://sopra.cs.tu-dortmund.de/wiki/infos/links/
+This is a project that I wrote during the Software Praktikum at the University.
+We as a team designed the diagramms together and then implemented the programm separately.
+After this project, we made a bigger game together as a team.
